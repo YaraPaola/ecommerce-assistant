@@ -455,7 +455,7 @@ function App() {
                                 </svg>
                             </div>
                             <div>
-                                <h1 className="text-3xl font-bold gradient-text">AI E-Commerce Assistant</h1>
+                                <h1 className="text-3xl font-bold gradient-text">Ecommerce-Assistant</h1>
                                 <p className="text-sm text-text-secondary">Transform your products with AI-powered content</p>
                             </div>
                         </div>

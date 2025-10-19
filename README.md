@@ -2,17 +2,26 @@
 <img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
 </div>
 
-# Run and deploy your AI Studio app
+# Ecommerce-Assistant
 
-This contains everything you need to run your app locally.
+An AI-powered tool to streamline creating and listing products online. It generates high-quality marketing materials, enhances product images, and helps publish to e-commerce platforms like Shopify.
 
-View your app in AI Studio: https://ai.studio/apps/drive/1gYCIDZsc0SmCvlxsoaQ71asVydoeOpuJ
+## ✨ Features
+
+- **AI-Powered Content:** Generate compelling product titles, descriptions, and SEO-friendly tags using Google's Gemini model.
+- **Product Scraping:** Import product details and images directly from a URL or an HTML file.
+- **Image Enhancement:** Use generative AI to place your product in new scenes or create artistic montages.
+- **Shopify Integration:** Directly publish your generated product listings to your Shopify store as a draft.
+- **Modern UI:** A sleek, responsive interface built with React and Tailwind CSS.
 
 ## Run Locally
 
-**Prerequisites:**  Node.js
+### Prerequisites
 
+- **Node.js** (v18 or higher recommended)
+- **Gemini API Key:** You need an API key from [Google AI Studio](https://aistudio.google.com/app/apikey).
 
+### Setup
 1. Install dependencies:
    `npm install`
 2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
@@ -21,9 +30,9 @@ View your app in AI Studio: https://ai.studio/apps/drive/1gYCIDZsc0SmCvlxsoaQ71a
 
 ## Deploy to the Web
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FYOUR_USERNAME%2FYOUR_REPONAME&env=GEMINI_API_KEY&envDescription=Your%20Google%20Gemini%20API%20Key&project-name=ai-ecommerce-assistant&repository-name=ai-ecommerce-assistant)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FYaraPaola%2Fecommerce-assistant&env=GEMINI_API_KEY&envDescription=Your%20Google%20Gemini%20API%20Key&project-name=ecommerce-assistant&repository-name=ecommerce-assistant)
 
-**Important:** Before using the button above, you must push your code to a public GitHub repository and replace `YOUR_USERNAME/YOUR_REPONAME` in the URL with your repository's details.
+**Ready to Deploy!** Click the button above to deploy your project to Vercel.
 
 This project is configured to be deployed to modern hosting platforms like Vercel or Netlify. These platforms will automatically build the Vite frontend and deploy the serverless functions located in the `/api` directory.
 
