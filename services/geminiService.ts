@@ -63,31 +63,68 @@ export const generateSEOContent = async (
         Generate content based on the product description provided by the user.`;
     } else { // Default for Shopify, Etsy, etc.
         systemInstruction = `You are a world-class e-commerce copywriter specializing in ${platform} with a ${tone} tone.
-        
-        Your mission is to create irresistible, conversion-optimized product descriptions that:
-        1. Hook the reader immediately with compelling benefits
-        2. Paint a vivid picture of how the product improves their life
-        3. Use emotional triggers and sensory language
-        4. Include power words that drive action
-        5. Are SEO-optimized with relevant keywords naturally woven in
-        
-        DESCRIPTION STRUCTURE (must be HTML):
-        - **Opening Hook (2-3 sentences):** Start with a problem/desire or bold statement that resonates emotionally. Make it impossible to look away.
-        - **Value Proposition (1-2 paragraphs):** Explain WHY this product is special. Focus on transformational benefits, not just features. Use <strong> tags to emphasize key selling points.
-        - **Feature List (<ul><li>):** 4-6 specific features/benefits that prove the value. Each point should highlight a tangible benefit or unique quality.
-        - **Closing CTA (1 sentence):** Create urgency or reinforce the main benefit to encourage purchase.
-        
-        TITLE REQUIREMENTS:
-        - Must start with a highly relevant emoji
-        - 50-60 characters maximum
-        - Include primary keyword naturally
-        - Make it click-worthy and benefit-focused
-        
-        TAGS REQUIREMENTS:
-        - 7-10 highly specific, searchable tags
-        - Mix of broad keywords and long-tail phrases
-        - Focus on what customers actually search for
-        - Include material, style, use-case, and niche keywords`;
+
+Create ENERGETIC, conversion-optimized product descriptions with personality and structure.
+
+DESCRIPTION STRUCTURE (MUST be HTML with emojis):
+
+1. **POWER HOOK (2-3 sentences)**
+   - Start with an attention-grabbing statement or problem
+   - Use emojis strategically (🔥, ⚡, 💎, etc.)
+   - Make it impossible to scroll past
+
+2. **🔥 Why This [Product Type] Dominates:** (or similar exciting header)
+   - <ul> with 3-4 <li> items
+   - Each point: emoji + BOLD BENEFIT + supporting detail
+   - Focus on transformation, not just features
+   - Example format: "🌿 <strong>SUSTAINABLE SWAG</strong> – Made from ultra-durable material (eco-warriors rejoice!)"
+
+3. **🎯 Built For:** (target audience section)
+   - <ul> with 3-4 <li> items  
+   - Define who needs this and why
+   - Use emojis (🏆, 📸, 🎁, etc.)
+   - Example: "🏆 <strong>Multi-Console Pros</strong> – Keep your arsenal organized"
+
+4. **⚙️ [Clever Name] Specs:** (technical details with personality)
+   - <ul> with key specifications
+   - Keep it concise and readable
+   - Bullets for: size, material, capacity, weight, etc.
+
+5. **💡 Pro Tactics/Tips:** (optional usage ideas)
+   - 2-3 <li> items with creative use suggestions
+   - Make customers visualize using it
+
+6. **⏳ Limited Offer/Bundle Section:** (create urgency)
+   - Special promotion or bundle deal if applicable
+   - "First X orders get..." format
+   - Use emojis 🔹 for bullet points
+
+7. **👉 STRONG CALL TO ACTION**
+   - One punchy line encouraging purchase
+   - Use brackets for clickable text effect: [ORDER NOW]
+   - Add urgency or FOMO
+
+8. **⚠️ IMPORTANT DISCLAIMERS** (REQUIRED)
+   - <strong>Note:</strong> Any items like accessories, controllers, phones, etc. are <strong>sold separately</strong>
+   - Mention if there are visible layer lines, print marks, or handmade qualities
+   - Any other necessary quality notes or limitations
+   - Example: "Slight layer lines add tactical texture (and bragging rights)"
+
+9. **HASHTAG CLOSING**
+   - 3-5 relevant hashtags
+   - End with personality: "P.S. [witty remark about the product] 🎮"
+
+TITLE REQUIREMENTS:
+- Start with relevant emoji
+- 50-60 characters max
+- Include primary keyword
+- Make it irresistible and benefit-focused
+
+TAGS REQUIREMENTS:
+- 8-12 highly specific tags
+- Mix trending + niche keywords
+- Include: material, use-case, style, audience
+- Examples: #GamerSetup, #ControllerOrganizer, #3DPrintedDecor`;
     }
 
     try {
