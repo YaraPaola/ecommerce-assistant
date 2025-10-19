@@ -234,37 +234,23 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
                 />
             </Section>
             
-            <Section 
-                title="4. Generate & Publish"
-                icon={
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                }
-                gradient={true}
-            >
-                <div className="space-y-6">
-                    <div className="flex flex-col sm:flex-row gap-4">
-                        <Button onClick={onGenerateSeo} disabled={isGeneratingSeo} variant="gradient" size="lg" className="w-full sm:flex-1" glow>
-                            {isGeneratingSeo ? <><Icon name="spinner" className="animate-spin mr-2" /> Generating...</> : <><Icon name="sparkles" className="mr-2" /> Generate SEO Content</>}
-                        </Button>
-                        <div className="flex gap-3">
-                            <Button onClick={onDownloadImages} disabled={!isAnyImageSelected} variant="outline" size="md" className="flex-1">
-                                <Icon name="download" className="mr-2" />
-                                Download
-                            </Button>
-                            <Button onClick={onExport} disabled={!canExport} variant="outline" size="md" className="flex-1" title={!canExport ? 'Please generate SEO content and select at least one variant.' : ''}>
-                                <Icon name="download" className="mr-2" />
-                                Export
-                            </Button>
-                        </div>
+            <Section title="4. Generate & Publish" iconName="bolt">
+                <div className="space-y-4">
+                    <button onClick={onGenerateSeo} disabled={isGeneratingSeo} title="Generate SEO Content (Ctrl/Cmd + G)" className="w-full px-6 py-3 text-base font-semibold rounded-xl bg-gradient-to-r from-primary-accent via-secondary to-accent text-white shadow-large hover-lift transition-all disabled:opacity-50 disabled:shadow-soft flex items-center justify-center">
+                        {isGeneratingSeo ? <><Icon name="spinner" className="animate-spin mr-2" /> Generating...</> : <>⚡ Generate SEO Content</>}
+                    </button>
+                    <div className="flex gap-3">
+                        <button onClick={onDownloadImages} disabled={!isAnyImageSelected} title="Download selected images (Ctrl/Cmd + Shift + D)" className="flex-1 px-4 py-2.5 text-sm font-semibold rounded-xl text-text-primary bg-white/80 border border-border hover:bg-white focus:ring-primary-accent backdrop-blur-sm hover-lift transition-all disabled:opacity-50">
+                            📥 Download
+                        </button>
+                        <button onClick={onExport} disabled={!canExport} title={!canExport ? 'Please generate SEO content and select at least one variant.' : ''} className="flex-1 px-4 py-2.5 text-sm font-semibold rounded-xl text-text-primary bg-white/80 border border-border hover:bg-white focus:ring-primary-accent backdrop-blur-sm hover-lift transition-all disabled:opacity-50">
+                            📤 Export
+                        </button>
                     </div>
                     
-                    <div className="pt-6 border-t border-border-light">
-                         <Button onClick={onPublish} disabled={!canPublish || isPublishing} variant="primary" size="lg" className="w-full bg-gradient-to-r from-success to-success/80 hover:from-success/90 hover:to-success shadow-glow" title={!canPublish ? 'Please fill Shopify details, generate SEO content and select variants.' : ''}>
-                           {isPublishing ? <><Icon name="spinner" className="animate-spin mr-2" /> Publishing...</> : <><Icon name="upload-cloud" className="mr-2" /> Publish to Shopify</>}
-                        </Button>
-                    </div>
+                    <button onClick={onPublish} disabled={!canPublish || isPublishing} title={!canPublish ? 'Please fill Shopify details, generate SEO content and select variants.' : 'Publish to Shopify (Ctrl/Cmd + Alt + P)'} className="w-full px-6 py-3 text-base font-semibold rounded-xl bg-gradient-to-r from-success to-success/80 text-white shadow-glow hover-lift transition-all disabled:opacity-50 flex items-center justify-center">
+                        {isPublishing ? <><Icon name="spinner" className="animate-spin mr-2" /> Publishing...</> : <>🚀 Publish to Shopify</>}
+                    </button>
                 </div>
             </Section>
 
