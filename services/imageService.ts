@@ -4,16 +4,52 @@ import { ImageFile } from "../types";
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
+// Helper function to convert AVIF/WebP images to JPEG
+const convertImageToJPEG = async (image: ImageFile): Promise<{ base64: string; mimeType: string }> => {
+    // If already a supported format, return as-is
+    if (image.mimeType !== 'image/avif' && image.mimeType !== 'image/webp') {
+        return { base64: image.base64, mimeType: image.mimeType };
+    }
+
+    try {
+        const img = new Image();
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        await new Promise((resolve, reject) => {
+            img.onload = () => {
+                canvas.width = img.width;
+                canvas.height = img.height;
+                ctx?.drawImage(img, 0, 0);
+                resolve(null);
+            };
+            img.onerror = reject;
+            img.src = `data:${image.mimeType};base64,${image.base64}`;
+        });
+        
+        const jpegData = canvas.toDataURL('image/jpeg', 0.9);
+        const base64 = jpegData.split(',')[1];
+        
+        return { base64, mimeType: 'image/jpeg' };
+    } catch (error) {
+        console.error('Failed to convert image format:', error);
+        throw new Error('Unable to convert image format. Please try with a different image.');
+    }
+};
+
 export const enhanceImage = async (image: ImageFile, prompt: string, size: string): Promise<ImageFile> => {
     try {
+        // Convert AVIF/WebP to JPEG if needed
+        const { base64, mimeType } = await convertImageToJPEG(image);
+        
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash-image',
             contents: {
                 parts: [
                     {
                         inlineData: {
-                            data: image.base64,
-                            mimeType: image.mimeType,
+                            data: base64,
+                            mimeType: mimeType,
                         },
                     },
                     {
@@ -62,10 +98,13 @@ export const createImageMontage = async (images: ImageFile[], prompt: string, si
     }
 
     try {
-        const imageParts = images.map(image => ({
+        // Convert all images to JPEG if needed
+        const convertedImages = await Promise.all(images.map(img => convertImageToJPEG(img)));
+        
+        const imageParts = convertedImages.map(({ base64, mimeType }) => ({
             inlineData: {
-                data: image.base64,
-                mimeType: image.mimeType,
+                data: base64,
+                mimeType: mimeType,
             },
         }));
 
@@ -120,14 +159,17 @@ Background Prompt: "${prompt}"`,
 
 export const changeImageColor = async (image: ImageFile, color: string): Promise<ImageFile> => {
      try {
+        // Convert AVIF/WebP to JPEG if needed
+        const { base64, mimeType } = await convertImageToJPEG(image);
+        
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash-image',
             contents: {
                 parts: [
                     {
                         inlineData: {
-                            data: image.base64,
-                            mimeType: image.mimeType,
+                            data: base64,
+                            mimeType: mimeType,
                         },
                     },
                     {
