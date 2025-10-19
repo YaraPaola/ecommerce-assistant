@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI E-Commerce Assistant - Modern UI Preview</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'primary-light': '#F8FAFC',
+            'primary-accent': '#6366F1',
+            'primary-accent-hover': '#4F46E5',
+            'secondary': '#EC4899',
+            'accent': '#06B6D4',
+            'success': '#10B981',
+            'warning': '#F59E0B',
+            'error': '#EF4444',
+            'surface': '#FFFFFF',
+            'surface-elevated': '#F8FAFC',
+            'text-primary': '#0F172A',
+            'text-secondary': '#64748B',
+            'text-muted': '#94A3B8',
+            'border': '#E2E8F0',
+            'border-light': '#F1F5F9',
+          },
+          fontFamily: {
+            'sans': ['Inter', 'system-ui', 'sans-serif'],
+            'display': ['Inter', 'system-ui', 'sans-serif'],
+          },
+          animation: {
+            'fade-in': 'fadeIn 0.5s ease-in-out',
+            'slide-up': 'slideUp 0.3s ease-out',
+            'bounce-subtle': 'bounceSubtle 2s infinite',
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+          },
+          keyframes: {
+            fadeIn: {
+              '0%': { opacity: '0', transform: 'translateY(10px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+            slideUp: {
+              '0%': { opacity: '0', transform: 'translateY(20px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+            bounceSubtle: {
+              '0%, 100%': { transform: 'translateY(0)' },
+              '50%': { transform: 'translateY(-5px)' },
+            },
+          },
+          backgroundImage: {
+            'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+            'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+            'hero-gradient': 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            'card-gradient': 'linear-gradient(145deg, #ffffff 0%, #f8fafc 100%)',
+          },
+          boxShadow: {
+            'soft': '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
+            'medium': '0 4px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+            'large': '0 10px 40px -10px rgba(0, 0, 0, 0.1), 0 20px 25px -5px rgba(0, 0, 0, 0.04)',
+            'glow': '0 0 20px rgba(99, 102, 241, 0.3)',
+            'glow-pink': '0 0 20px rgba(236, 72, 153, 0.3)',
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      min-height: 100vh;
+    }
+    
+    .animated-bg {
+      background: linear-gradient(-45deg, #f8fafc, #e2e8f0, #f1f5f9, #e2e8f0);
+      background-size: 400% 400%;
+      animation: gradientShift 15s ease infinite;
+    }
+    
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    .gradient-text {
+      background: linear-gradient(135deg, #6366f1, #ec4899, #06b6d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .glass {
+      background: rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+    
+    .hover-lift {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .hover-lift:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.1), 0 20px 25px -5px rgba(0, 0, 0, 0.04);
+    }
+  </style>
+</head>
+<body class="animated-bg min-h-screen">
+  <!-- Modern Header -->
+  <header class="glass sticky top-0 z-40 border-b border-white/20">
+    <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+          <div class="w-10 h-10 bg-gradient-to-br from-primary-accent to-secondary rounded-xl flex items-center justify-center shadow-glow">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+          <div>
+            <h1 class="text-3xl font-bold gradient-text">AI E-Commerce Assistant</h1>
+            <p class="text-sm text-text-secondary">Transform your products with AI-powered content</p>
+          </div>
+        </div>
+        <div class="hidden md:flex items-center space-x-2">
+          <div class="px-3 py-1 bg-primary-accent/10 text-primary-accent text-xs font-medium rounded-full">
+            ✨ AI-Powered
+          </div>
+          <div class="px-3 py-1 bg-secondary/10 text-secondary text-xs font-medium rounded-full">
+            🚀 Modern
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-grow max-w-screen-2xl mx-auto w-full py-8 px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Left Panel -->
+      <div class="lg:col-span-2 space-y-8">
+        <!-- Section 1: Configure AI Settings -->
+        <div class="bg-gradient-to-br from-white to-surface-elevated backdrop-blur-sm p-8 rounded-2xl shadow-soft border border-white/30 hover-lift transition-all duration-300">
+          <div class="flex items-center space-x-3 mb-8">
+            <div class="w-8 h-8 bg-gradient-to-br from-primary-accent to-secondary rounded-lg flex items-center justify-center text-white shadow-glow">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </div>
+            <h2 class="text-2xl font-bold text-text-primary">1. Configure AI Settings</h2>
+          </div>
+          <div class="space-y-6">
+            <div>
+              <label class="block text-sm font-semibold text-text-primary mb-3">Target Platform</label>
+              <div class="flex flex-wrap gap-3">
+                <button class="px-4 py-2 text-sm font-medium rounded-xl transition-all duration-300 hover-lift bg-gradient-to-r from-primary-accent to-secondary text-white shadow-glow">
+                  Shopify
+                </button>
+                <button class="px-4 py-2 text-sm font-medium rounded-xl transition-all duration-300 hover-lift bg-white/80 text-text-secondary hover:bg-white border border-border hover:shadow-soft">
+                  WooCommerce
+                </button>
+                <button class="px-4 py-2 text-sm font-medium rounded-xl transition-all duration-300 hover-lift bg-white/80 text-text-secondary hover:bg-white border border-border hover:shadow-soft">
+                  Amazon
+                </button>
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-text-primary mb-3">Tone of Voice</label>
+              <div class="flex flex-wrap gap-3">
+                <button class="px-4 py-2 text-sm font-medium rounded-xl transition-all duration-300 hover-lift bg-gradient-to-r from-secondary to-accent text-white shadow-glow-pink">
+                  Professional
+                </button>
+                <button class="px-4 py-2 text-sm font-medium rounded-xl transition-all duration-300 hover-lift bg-white/80 text-text-secondary hover:bg-white border border-border hover:shadow-soft">
+                  Casual
+                </button>
+                <button class="px-4 py-2 text-sm font-medium rounded-xl transition-all duration-300 hover-lift bg-white/80 text-text-secondary hover:bg-white border border-border hover:shadow-soft">
+                  Friendly
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 2: Product Details -->
+        <div class="bg-white/90 backdrop-blur-sm p-8 rounded-2xl shadow-soft border border-white/30 hover-lift transition-all duration-300">
+          <div class="flex items-center space-x-3 mb-8">
+            <div class="w-8 h-8 bg-gradient-to-br from-primary-accent to-secondary rounded-lg flex items-center justify-center text-white shadow-glow">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <h2 class="text-2xl font-bold text-text-primary">2. Provide Product Details</h2>
+          </div>
+          <div class="space-y-6">
+            <div>
+              <label class="block text-sm font-semibold text-text-primary mb-2">Import from URL</label>
+              <div class="flex rounded-xl shadow-soft border border-border overflow-hidden">
+                <input type="text" class="flex-1 block w-full border-0 focus:ring-2 focus:ring-primary-accent focus:outline-none sm:text-sm px-4 py-3 bg-white/80" placeholder="https://example.com/product-page" />
+                <button class="px-4 py-2 text-sm font-semibold rounded-xl bg-gradient-to-r from-primary-accent via-secondary to-accent text-white shadow-large">
+                  Fetch
+                </button>
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-text-primary mb-2">Product Description</label>
+              <textarea rows="4" class="mt-1 block w-full rounded-xl border-border shadow-soft focus:ring-2 focus:ring-primary-accent focus:border-primary-accent sm:text-sm p-4 bg-white/80 resize-none" placeholder="Describe your product in detail..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3: Generate & Publish -->
+        <div class="bg-gradient-to-br from-white to-surface-elevated backdrop-blur-sm p-8 rounded-2xl shadow-soft border border-white/30 hover-lift transition-all duration-300">
+          <div class="flex items-center space-x-3 mb-8">
+            <div class="w-8 h-8 bg-gradient-to-br from-primary-accent to-secondary rounded-lg flex items-center justify-center text-white shadow-glow">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+            <h2 class="text-2xl font-bold text-text-primary">4. Generate & Publish</h2>
+          </div>
+          <div class="space-y-6">
+            <button class="w-full px-6 py-3 text-base font-semibold rounded-xl bg-gradient-to-r from-primary-accent via-secondary to-accent text-white shadow-large hover:from-secondary hover:via-accent hover:to-primary-accent focus:ring-primary-accent border-0 shadow-glow">
+              ⚡ Generate SEO Content
+            </button>
+            <div class="flex gap-3">
+              <button class="flex-1 px-4 py-2.5 text-sm font-semibold rounded-xl text-text-primary bg-white/80 border border-border hover:bg-white focus:ring-primary-accent backdrop-blur-sm">
+                📥 Download
+              </button>
+              <button class="flex-1 px-4 py-2.5 text-sm font-semibold rounded-xl text-text-primary bg-white/80 border border-border hover:bg-white focus:ring-primary-accent backdrop-blur-sm">
+                📤 Export
+              </button>
+            </div>
+            <button class="w-full px-6 py-3 text-base font-semibold rounded-xl bg-gradient-to-r from-success to-success/80 text-white shadow-glow">
+              🚀 Publish to Shopify
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Panel -->
+      <div class="lg:col-span-1">
+        <div class="sticky top-24">
+          <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft border border-white/20 p-6 hover-lift">
+            <div class="space-y-6">
+              <div class="flex items-center space-x-3 mb-6">
+                <div class="w-8 h-8 bg-gradient-to-br from-accent to-primary-accent rounded-lg flex items-center justify-center text-white shadow-glow">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                <h2 class="text-2xl font-bold text-text-primary">Generated Content</h2>
+              </div>
+              
+              <div class="flex flex-col items-center justify-center h-96 bg-gradient-to-br from-surface-elevated to-white rounded-2xl border border-border-light">
+                <div class="w-20 h-20 bg-gradient-to-br from-primary-accent/10 to-secondary/10 rounded-2xl flex items-center justify-center mb-6">
+                  <svg class="w-10 h-10 text-primary-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                <p class="text-text-muted text-center font-medium">Your generated title, description, and tags will appear here.</p>
+                <p class="text-text-muted text-sm text-center mt-2">Start by configuring your AI settings and providing product details.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Toast Notification Example -->
+  <div class="fixed top-6 right-6 z-50 w-full max-w-sm animate-slide-up">
+    <div class="rounded-2xl bg-gradient-to-r from-success/10 to-success/5 p-5 shadow-glow border border-success/20 backdrop-blur-sm">
+      <div class="flex items-start">
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 rounded-full bg-gradient-to-r from-success/10 to-success/5 flex items-center justify-center">
+            <svg class="h-5 w-5 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+        </div>
+        <div class="ml-4 flex-1">
+          <p class="text-sm font-semibold text-success">Success! Your content has been generated.</p>
+        </div>
+        <div class="ml-4 flex-shrink-0">
+          <button class="inline-flex rounded-lg p-1.5 text-success hover:bg-black/5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-success focus:ring-offset-success/10 transition-all duration-200">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,174 @@
+
+import React, { useRef } from 'react';
+import { ImageFile } from '../types';
+import { Icon } from './Icon';
+import { downloadImage } from '../services/imageDownloadService';
+import { Button } from './Button';
+
+interface ImageUploaderProps {
+    images: ImageFile[];
+    onImagesChange: (images: ImageFile[]) => void;
+    onEnhanceClick: (image: ImageFile) => void;
+    isEnhancing: boolean;
+    onGenerateVideoClick: (image: ImageFile) => void;
+    isGeneratingVideo: boolean;
+    onGenerateMusicClick: () => void;
+    isGeneratingMusic: boolean;
+    onMontageClick: () => void;
+}
+
+const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = error => reject(error);
+    });
+};
+
+export const ImageUploader: React.FC<ImageUploaderProps> = ({ images, onImagesChange, onEnhanceClick, isEnhancing, onGenerateVideoClick, isGeneratingVideo, onGenerateMusicClick, isGeneratingMusic, onMontageClick }) => {
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.files) {
+            const files = event.target.files;
+            const newImages: ImageFile[] = [];
+            for (let i = 0; i < files.length; i++) {
+                const file = files.item(i);
+                if (file) {
+                    const base64 = await fileToBase64(file);
+                    newImages.push({
+                        id: crypto.randomUUID(),
+                        name: file.name,
+                        base64: base64.split(',')[1],
+                        mimeType: file.type,
+                        selected: true,
+                    });
+                }
+            }
+            onImagesChange([...images, ...newImages]);
+        }
+    };
+
+    const removeImage = (id: string) => {
+        onImagesChange(images.filter((image) => image.id !== id));
+    };
+
+    const toggleSelection = (id: string) => {
+        const updatedImages = images.map(img =>
+            img.id === id ? { ...img, selected: !img.selected } : img
+        );
+        onImagesChange(updatedImages);
+    };
+
+    const allSelected = images.length > 0 && images.every(img => img.selected);
+
+    const handleToggleSelectAll = () => {
+        const newSelectionState = !allSelected;
+        const updatedImages = images.map(img => ({ ...img, selected: newSelectionState }));
+        onImagesChange(updatedImages);
+    };
+
+    const handleDownloadClick = (e: React.MouseEvent, image: ImageFile) => {
+        e.stopPropagation();
+        downloadImage(image);
+    };
+
+    const selectedImagesCount = images.filter(img => img.selected).length;
+    const canCreateMontage = selectedImagesCount > 1;
+
+    return (
+        <div>
+            <div className="flex justify-between items-center mb-2">
+                <div className="flex items-center gap-4">
+                    <label className="block text-sm font-medium text-gray-700">Product Images</label>
+                    {images.length > 0 && (
+                        <button
+                            onClick={handleToggleSelectAll}
+                            className="text-sm font-medium text-primary-accent hover:text-primary-accent-hover transition-colors"
+                        >
+                            {allSelected ? 'Deselect All' : `Select All (${images.length})`}
+                        </button>
+                    )}
+                </div>
+                 <div className="flex items-center gap-2">
+                    <Button 
+                        onClick={onGenerateMusicClick}
+                        disabled={isGeneratingMusic}
+                        variant="secondary"
+                        className="px-3 py-1.5 text-xs"
+                        title="Generate background music"
+                    >
+                        <Icon name="musical-note" className="mr-1.5 h-4 w-4" />
+                        Generate Music
+                    </Button>
+                    <Button 
+                        onClick={onMontageClick} 
+                        disabled={!canCreateMontage} 
+                        variant="secondary" 
+                        className="px-3 py-1.5 text-xs" 
+                        title={!canCreateMontage ? 'Select 2 or more images to create a montage' : 'Combine selected images into one'}
+                    >
+                        <Icon name="sparkles" className="mr-1.5 h-4 w-4" />
+                        Create Montage ({selectedImagesCount})
+                    </Button>
+                </div>
+            </div>
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4">
+                {images.map((image, index) => (
+                    <div key={image.id} className="relative group aspect-square">
+                        <div 
+                            className={`w-full h-full rounded-lg transition-all overflow-hidden ${image.selected ? 'ring-2 ring-offset-2 ring-primary-accent' : 'ring-1 ring-gray-200'}`}
+                        >
+                            <img src={`data:${image.mimeType};base64,${image.base64}`} alt={image.name} className="w-full h-full object-cover" />
+                        </div>
+                        
+                        <button
+                            onClick={() => toggleSelection(image.id)}
+                            className={`absolute top-2 right-2 z-20 w-6 h-6 rounded-full flex items-center justify-center border-2 transition-colors
+                                ${image.selected ? 'bg-primary-accent border-primary-accent' : 'bg-white/50 border-gray-400 group-hover:border-gray-600'}
+                            `}
+                            aria-label={`Select image ${image.name}`}
+                            title={image.selected ? `Deselect image` : `Select image`}
+                        >
+                            {image.selected && <Icon name="check" className="w-4 h-4 text-white" />}
+                        </button>
+                        
+                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all rounded-lg flex items-center justify-center gap-1 z-10">
+                            <button onClick={(e) => { e.stopPropagation(); onEnhanceClick(image); }} disabled={isEnhancing} className="p-2 bg-white/80 rounded-full text-indigo-600 hover:bg-white opacity-0 group-hover:opacity-100 transition-opacity" title="Enhance Image">
+                                <Icon name="sparkles" />
+                            </button>
+                             <button onClick={(e) => { e.stopPropagation(); onGenerateVideoClick(image); }} disabled={isGeneratingVideo} className="p-2 bg-white/80 rounded-full text-purple-600 hover:bg-white opacity-0 group-hover:opacity-100 transition-opacity" title="Create Video">
+                                <Icon name="film" />
+                            </button>
+                             <button onClick={(e) => handleDownloadClick(e, image)} className="p-2 bg-white/80 rounded-full text-green-600 hover:bg-white opacity-0 group-hover:opacity-100 transition-opacity" title="Download Image">
+                                <Icon name="download" />
+                            </button>
+                            <button onClick={(e) => { e.stopPropagation(); removeImage(image.id); }} className="p-2 bg-white/80 rounded-full text-red-500 hover:bg-white opacity-0 group-hover:opacity-100 transition-opacity" title="Remove Image">
+                                <Icon name="trash" />
+                            </button>
+                        </div>
+                        {index === 0 && (
+                             <span className="absolute top-1 left-1 bg-primary-accent text-white text-xs font-bold px-2 py-0.5 rounded-full z-10">Primary</span>
+                        )}
+                    </div>
+                ))}
+                <div
+                    onClick={() => fileInputRef.current?.click()}
+                    className="aspect-square flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary-accent hover:bg-violet-50 transition-colors"
+                >
+                    <Icon name="upload" className="w-8 h-8 text-gray-400"/>
+                    <span className="mt-2 text-xs text-center text-gray-500">Add More</span>
+                </div>
+            </div>
+            <input
+                type="file"
+                ref={fileInputRef}
+                multiple
+                accept="image/png, image/jpeg, image/webp"
+                onChange={handleFileChange}
+                className="hidden"
+            />
+        </div>
+    );
+};
