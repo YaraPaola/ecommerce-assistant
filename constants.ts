@@ -16,37 +16,124 @@ export const TONES = [
 ];
 
 export const BACKGROUND_PRESETS = [
+    // Clean & Minimalist
     { 
-        name: 'Studio', 
-        prompt: 'A professional, clean product photo in a minimalist studio setting with soft, even lighting and a seamless, neutral-colored background.' 
+        name: 'Studio White', 
+        prompt: 'Professional studio photo with pure white seamless background, soft diffused lighting, clean shadows, minimalist and elegant.' 
     },
     { 
-        name: 'Twinkly Lights', 
-        prompt: 'Lay the item on a flat surface like a wooden table in a room with low light. The background should be out of focus with some warm, twinkly lights and subtle greenery.' 
+        name: 'Studio Black', 
+        prompt: 'Dramatic studio photo with pure black seamless background, subtle rim lighting highlighting edges, sophisticated and modern.' 
     },
     { 
-        name: 'Gaming Room', 
-        prompt: 'Lay the item on a flat surface like a desk in a gaming room with low light. The background should feature colorful RGB/LED lights and some tech-related props or greenery.' 
+        name: 'Soft Gradient', 
+        prompt: 'Smooth gradient background transitioning from soft pastel pink to light blue, dreamy and ethereal lighting, minimal and peaceful.' 
+    },
+    
+    // Warm & Cozy
+    { 
+        name: 'Cozy Home', 
+        prompt: 'Product on a rustic wooden table with warm afternoon sunlight streaming through a window, soft bokeh background with houseplants and natural textures.' 
     },
     { 
-        name: 'Tech Room', 
-        prompt: 'Lay the item on a flat surface like a modern desk in a tech-focused room. The background is low-light with cool-toned LED strips and minimal greenery.'
+        name: 'Golden Hour', 
+        prompt: 'Bathed in warm golden hour sunlight with a soft glow, background has warm orange and amber tones, peaceful and luxurious atmosphere.' 
     },
     { 
-        name: 'Wall Mounted', 
-        prompt: 'Place the item on a wall in a tech-themed room with low light. The background should feature ambient LED lighting and some subtle greenery.'
+        name: 'Candlelight Ambiance', 
+        prompt: 'Intimate setting with warm candlelight creating soft flickering glows, dark cozy background with wooden elements and soft textiles.' 
+    },
+    
+    // Nature & Outdoor
+    { 
+        name: 'Garden Fresh', 
+        prompt: 'Surrounded by lush green plants and fresh flowers, natural daylight, botanical garden atmosphere, vibrant and refreshing.' 
     },
     { 
-        name: 'Lifestyle', 
-        prompt: 'A lifestyle photo showing the product in a natural, real-world setting, such as a cozy living room, a busy kitchen, or a neat office desk.'
+        name: 'Beach Vibes', 
+        prompt: 'Sandy beach surface with soft ocean waves blurred in background, bright coastal sunlight, tropical and breezy feel.' 
     },
     { 
-        name: 'Office Space', 
-        prompt: 'A photorealistic image of the product placed naturally on a warm oak wood desk in a modern home office. The background is softly blurred (bokeh) showing a window with gentle daylight streaming in and some green plants. The lighting on the product should match the scene, with soft shadows cast onto the desk for a realistic effect.'
+        name: 'Forest Morning', 
+        prompt: 'Placed on moss-covered wood in a misty forest, soft morning light filtering through trees, natural and earthy tones.' 
     },
-     { 
-        name: 'Outdoor', 
-        prompt: 'An outdoor shot of the product, placed on a natural surface like mossy wood or a smooth rock, with a softly blurred background of a forest or garden.'
+    { 
+        name: 'Mountain View', 
+        prompt: 'Set against a blurred mountain landscape with clear blue sky, natural stone surface, crisp and adventurous atmosphere.' 
+    },
+    
+    // Modern & Tech
+    { 
+        name: 'Neon Lights', 
+        prompt: 'Futuristic setting with vibrant neon lights in purple, blue, and pink, dark background with modern geometric shapes, cyberpunk aesthetic.' 
+    },
+    { 
+        name: 'Tech Minimal', 
+        prompt: 'Ultra-modern minimalist desk with matte black surface, subtle LED accent lighting in cool blue, clean tech-focused environment.' 
+    },
+    { 
+        name: 'RGB Gaming', 
+        prompt: 'Gaming setup with dynamic RGB lighting cycling through rainbow colors, dark background with modern gaming peripherals visible but blurred.' 
+    },
+    
+    // Artistic & Creative
+    { 
+        name: 'Watercolor Dream', 
+        prompt: 'Soft watercolor painted background with flowing pastel colors blending together, artistic and whimsical, delicate and creative.' 
+    },
+    { 
+        name: 'Abstract Geometry', 
+        prompt: 'Bold geometric shapes and patterns in the background with vibrant contrasting colors, modern art gallery aesthetic, dynamic and eye-catching.' 
+    },
+    { 
+        name: 'Vintage Film', 
+        prompt: 'Retro vintage aesthetic with warm film grain, muted nostalgic colors, soft vignette, classic and timeless feel.' 
+    },
+    { 
+        name: 'Pop Art', 
+        prompt: 'Bold pop art style background with bright saturated colors, comic book dots pattern, energetic and playful vibe.' 
+    },
+    
+    // Luxurious & Elegant
+    { 
+        name: 'Marble Luxury', 
+        prompt: 'Placed on pristine white marble surface with gold veining, soft elegant lighting, background shows luxurious interior with subtle bokeh.' 
+    },
+    { 
+        name: 'Velvet Elegance', 
+        prompt: 'Rich jewel-toned velvet fabric background in deep burgundy or emerald, soft dramatic lighting, opulent and sophisticated.' 
+    },
+    { 
+        name: 'Champagne Glow', 
+        prompt: 'Sparkling champagne-colored background with soft golden bokeh lights, celebratory and glamorous atmosphere.' 
+    },
+    
+    // Seasonal & Festive
+    { 
+        name: 'Winter Wonderland', 
+        prompt: 'Snowy background with soft white bokeh, cool blue-tinted lighting, frosted elements, magical and serene winter atmosphere.' 
+    },
+    { 
+        name: 'Autumn Cozy', 
+        prompt: 'Warm autumn setting with orange and red fall leaves, cozy blankets or knits visible, warm amber lighting, nostalgic fall vibes.' 
+    },
+    { 
+        name: 'Spring Blossom', 
+        prompt: 'Surrounded by delicate cherry blossom or spring flowers, soft pink and white tones, gentle natural lighting, fresh and romantic.' 
+    },
+    
+    // Urban & Industrial
+    { 
+        name: 'Urban Concrete', 
+        prompt: 'Industrial concrete wall texture background in gray tones, natural urban lighting, modern and edgy atmosphere.' 
+    },
+    { 
+        name: 'Brick Loft', 
+        prompt: 'Exposed brick wall background in warm terracotta tones, industrial loft lighting with large windows, trendy and authentic.' 
+    },
+    { 
+        name: 'Neon City Night', 
+        prompt: 'Night cityscape with blurred neon signs and street lights, cool blue and purple tones, urban and metropolitan vibe.' 
     }
 ];
 
