@@ -8,7 +8,7 @@ export const fetchProductFromURL = async (url: string): Promise<{ title: string;
         throw new Error("Please provide a valid URL.");
     }
     
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
     
     try {
         const prompt = `Your task is to act as a web scraper. You will be given a URL.
@@ -69,7 +69,7 @@ URL to process: ${url}`;
 };
 
 export const extractProductFromHtml = async (htmlContent: string): Promise<{ title: string; description: string; price: number; imageUrls: string[] }> => {
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
     const responseSchema = {
         type: Type.OBJECT,
@@ -109,8 +109,13 @@ ${htmlContent}
             },
         });
 
-        const jsonText = response.text.trim();
-        const parsedData = JSON.parse(jsonText);
+        // More robustly get the JSON text from the first candidate's first part.
+        const firstCandidate = response.candidates?.[0];
+        if (!firstCandidate || !firstCandidate.content.parts?.[0]?.text) {
+            throw new Error("Received an invalid or empty response from the AI.");
+        }
+        const jsonText = firstCandidate.content.parts[0].text;
+        const parsedData = JSON.parse(jsonText.trim());
 
         if (!parsedData.title || !parsedData.description || typeof parsedData.price !== 'number' || !Array.isArray(parsedData.imageUrls)) {
             throw new Error("The AI response is missing required fields or has incorrect types.");
