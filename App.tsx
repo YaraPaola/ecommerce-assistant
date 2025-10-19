@@ -41,7 +41,7 @@ function App() {
     const [productData, setProductData] = useState<ProductData>(initialProductData);
     const [seoContent, setSeoContent] = useState<SEOContent | null>(null);
     const [targetPlatform, setTargetPlatform] = useState('shopify');
-    const [toneOfVoice, setToneOfVoice] = useState('professional');
+    const [toneOfVoice, setToneOfVoice] = useState('persuasive');
     const [toastInfo, setToastInfo] = useState<ToastInfo | null>(null);
     const [hasApiKey, setHasApiKey] = useState(true); // Assume key exists initially
 

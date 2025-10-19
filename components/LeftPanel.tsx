@@ -92,8 +92,8 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
                                 <button key={p.id} onClick={() => setTargetPlatform(p.id)}
                                     className={`px-4 py-2 text-sm font-medium rounded-xl transition-all duration-300 hover-lift ${
                                         targetPlatform === p.id 
-                                            ? 'bg-gradient-to-r from-primary-accent to-secondary text-white shadow-glow' 
-                                            : 'bg-white/80 text-text-secondary hover:bg-white border border-border hover:shadow-soft'
+                                            ? 'bg-gradient-to-r from-[#8b5cf6] to-[#ec4899] text-white shadow-lg' 
+                                            : 'bg-[#6366f1] text-white hover:bg-[#4f46e5] shadow-md'
                                     }`}>
                                     {p.name}
                                 </button>
@@ -107,8 +107,8 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
                                 <button key={t.id} onClick={() => setToneOfVoice(t.id)}
                                     className={`px-4 py-2 text-sm font-medium rounded-xl transition-all duration-300 hover-lift ${
                                         toneOfVoice === t.id 
-                                            ? 'bg-gradient-to-r from-secondary to-accent text-white shadow-glow-pink' 
-                                            : 'bg-white/80 text-text-secondary hover:bg-white border border-border hover:shadow-soft'
+                                            ? 'bg-gradient-to-r from-[#ec4899] to-[#f43f5e] text-white shadow-lg' 
+                                            : 'bg-[#ec4899] text-white hover:bg-[#db2777] shadow-md'
                                     }`}>
                                     {t.name}
                                 </button>
