@@ -37,6 +37,12 @@ const initialProductData: ProductData = {
 };
 
 function App() {
+    // Check if AI Studio context is available (for video generation)
+    React.useEffect(() => {
+        // @ts-ignore
+        setIsAiStudioAvailable(typeof window.aistudio !== 'undefined');
+    }, []);
+    
     // State management
     const [productData, setProductData] = useState<ProductData>(initialProductData);
     const [seoContent, setSeoContent] = useState<SEOContent | null>(null);
@@ -44,6 +50,7 @@ function App() {
     const [toneOfVoice, setToneOfVoice] = useState('persuasive');
     const [toastInfo, setToastInfo] = useState<ToastInfo | null>(null);
     const [hasApiKey, setHasApiKey] = useState(true); // Assume key exists initially
+    const [isAiStudioAvailable, setIsAiStudioAvailable] = useState(false);
 
     // Loading states
     const [isFetchingUrl, setIsFetchingUrl] = useState(false);
@@ -285,6 +292,10 @@ function App() {
     };
 
     const handleGenerateVideo = (image: ImageFile) => {
+        if (!isAiStudioAvailable) {
+            showToast('info', 'Video generation is only available when running inside Google AI Studio.');
+            return;
+        }
         checkApiKeyAndProceed(() => {
             setImageForVideo(image);
             setIsGenerateVideoModalOpen(true);
@@ -490,7 +501,7 @@ function App() {
                                 isImportingFromFile={isImportingFromFile || isImportingImages}
                                 onGenerateImage={handleGenerateImage}
                                 isGeneratingImage={isGeneratingImage || (!!generatedImagePreview && isGeneratingImage)}
-                                onGenerateVideo={handleGenerateVideo}
+                                onGenerateVideo={isAiStudioAvailable ? handleGenerateVideo : undefined}
                                 isGeneratingVideo={isGeneratingVideo}
                                 onGenerateMusic={handleGenerateMusic}
                                 isGeneratingMusic={isGeneratingMusic}
