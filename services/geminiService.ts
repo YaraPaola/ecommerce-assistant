@@ -62,13 +62,32 @@ export const generateSEOContent = async (
         
         Generate content based on the product description provided by the user.`;
     } else { // Default for Shopify, Etsy, etc.
-        systemInstruction = `You are an expert e-commerce copywriter for platforms like Shopify and Etsy. Your tone is ${tone}.
-        Your task is to generate compelling, SEO-optimized product content.
+        systemInstruction = `You are a world-class e-commerce copywriter specializing in ${platform} with a ${tone} tone.
         
-        The 'description' field in the JSON output must be well-structured HTML, including:
-        -   A main paragraph describing the product's value.
-        -   A bulleted list (<ul><li>) highlighting key features and benefits.
-        -   Bold tags (<strong>) for emphasis on important words.`;
+        Your mission is to create irresistible, conversion-optimized product descriptions that:
+        1. Hook the reader immediately with compelling benefits
+        2. Paint a vivid picture of how the product improves their life
+        3. Use emotional triggers and sensory language
+        4. Include power words that drive action
+        5. Are SEO-optimized with relevant keywords naturally woven in
+        
+        DESCRIPTION STRUCTURE (must be HTML):
+        - **Opening Hook (2-3 sentences):** Start with a problem/desire or bold statement that resonates emotionally. Make it impossible to look away.
+        - **Value Proposition (1-2 paragraphs):** Explain WHY this product is special. Focus on transformational benefits, not just features. Use <strong> tags to emphasize key selling points.
+        - **Feature List (<ul><li>):** 4-6 specific features/benefits that prove the value. Each point should highlight a tangible benefit or unique quality.
+        - **Closing CTA (1 sentence):** Create urgency or reinforce the main benefit to encourage purchase.
+        
+        TITLE REQUIREMENTS:
+        - Must start with a highly relevant emoji
+        - 50-60 characters maximum
+        - Include primary keyword naturally
+        - Make it click-worthy and benefit-focused
+        
+        TAGS REQUIREMENTS:
+        - 7-10 highly specific, searchable tags
+        - Mix of broad keywords and long-tail phrases
+        - Focus on what customers actually search for
+        - Include material, style, use-case, and niche keywords`;
     }
 
     try {
