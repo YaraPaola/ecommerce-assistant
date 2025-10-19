@@ -37,20 +37,12 @@ const initialProductData: ProductData = {
 };
 
 function App() {
-    // Check if AI Studio context is available (for video generation)
-    React.useEffect(() => {
-        // @ts-ignore
-        setIsAiStudioAvailable(typeof window.aistudio !== 'undefined');
-    }, []);
-    
     // State management
     const [productData, setProductData] = useState<ProductData>(initialProductData);
     const [seoContent, setSeoContent] = useState<SEOContent | null>(null);
     const [targetPlatform, setTargetPlatform] = useState('shopify');
     const [toneOfVoice, setToneOfVoice] = useState('persuasive');
     const [toastInfo, setToastInfo] = useState<ToastInfo | null>(null);
-    const [hasApiKey, setHasApiKey] = useState(true); // Assume key exists initially
-    const [isAiStudioAvailable, setIsAiStudioAvailable] = useState(false);
 
     // Loading states
     const [isFetchingUrl, setIsFetchingUrl] = useState(false);
@@ -255,51 +247,9 @@ function App() {
         }
     };
 
-    const checkApiKeyAndProceed = async (callback: () => void) => {
-        // @ts-ignore
-        if (typeof window.aistudio === 'undefined') {
-            showToast('error', 'AI Studio context is not available.');
-            return;
-        }
-        
-        let hasKey = hasApiKey;
-        if (hasKey) {
-            try {
-                // @ts-ignore
-                hasKey = await window.aistudio.hasSelectedApiKey();
-            } catch (e) {
-                console.error("Error checking for API key:", e);
-                hasKey = false;
-            }
-        }
-
-        if (hasKey) {
-            setHasApiKey(true);
-            callback();
-        } else {
-            showToast('info', 'Please select an API key to generate videos.');
-            try {
-                // @ts-ignore
-                await window.aistudio.openSelectKey();
-                setHasApiKey(true);
-                callback();
-            } catch (e) {
-                console.error("API key selection was cancelled or failed.", e);
-                setHasApiKey(false);
-                showToast('error', 'API key selection is required for video generation.');
-            }
-        }
-    };
-
     const handleGenerateVideo = (image: ImageFile) => {
-        if (!isAiStudioAvailable) {
-            showToast('info', 'Video generation is only available when running inside Google AI Studio.');
-            return;
-        }
-        checkApiKeyAndProceed(() => {
-            setImageForVideo(image);
-            setIsGenerateVideoModalOpen(true);
-        });
+        setImageForVideo(image);
+        setIsGenerateVideoModalOpen(true);
     };
     
     const handleVideoGeneration = async (prompt: string, aspectRatio: string, resolution: string) => {
@@ -316,9 +266,6 @@ function App() {
             setVideoPreviewMode('view_only');
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred.';
-            if (errorMessage.includes("API key error")) {
-                setHasApiKey(false); // Reset key state if it's invalid
-            }
             showToast('error', errorMessage);
         } finally {
             setIsGeneratingVideo(false);
@@ -501,7 +448,7 @@ function App() {
                                 isImportingFromFile={isImportingFromFile || isImportingImages}
                                 onGenerateImage={handleGenerateImage}
                                 isGeneratingImage={isGeneratingImage || (!!generatedImagePreview && isGeneratingImage)}
-                                onGenerateVideo={isAiStudioAvailable ? handleGenerateVideo : undefined}
+                                onGenerateVideo={handleGenerateVideo}
                                 isGeneratingVideo={isGeneratingVideo}
                                 onGenerateMusic={handleGenerateMusic}
                                 isGeneratingMusic={isGeneratingMusic}

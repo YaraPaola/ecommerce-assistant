@@ -10,7 +10,7 @@ interface ImageUploaderProps {
     onImagesChange: (images: ImageFile[]) => void;
     onEnhanceClick: (image: ImageFile) => void;
     isEnhancing: boolean;
-    onGenerateVideoClick?: (image: ImageFile) => void;
+    onGenerateVideoClick: (image: ImageFile) => void;
     isGeneratingVideo: boolean;
     onGenerateMusicClick: () => void;
     isGeneratingMusic: boolean;
@@ -138,11 +138,9 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ images, onImagesCh
                             <button onClick={(e) => { e.stopPropagation(); onEnhanceClick(image); }} disabled={isEnhancing} className="p-2 bg-white/80 rounded-full text-indigo-600 hover:bg-white opacity-0 group-hover:opacity-100 transition-opacity" title="Enhance Image">
                                 <Icon name="sparkles" />
                             </button>
-                            {onGenerateVideoClick && (
-                                <button onClick={(e) => { e.stopPropagation(); onGenerateVideoClick(image); }} disabled={isGeneratingVideo} className="p-2 bg-white/80 rounded-full text-purple-600 hover:bg-white opacity-0 group-hover:opacity-100 transition-opacity" title="Create Video">
-                                    <Icon name="film" />
-                                </button>
-                            )}
+                            <button onClick={(e) => { e.stopPropagation(); onGenerateVideoClick(image); }} disabled={isGeneratingVideo} className="p-2 bg-white/80 rounded-full text-purple-600 hover:bg-white opacity-0 group-hover:opacity-100 transition-opacity" title="Create Video">
+                                <Icon name="film" />
+                            </button>
                             <button onClick={(e) => handleDownloadClick(e, image)} className="p-2 bg-white/80 rounded-full text-green-600 hover:bg-white opacity-0 group-hover:opacity-100 transition-opacity" title="Download Image">
                                 <Icon name="download" />
                             </button>
