@@ -75,12 +75,48 @@ export const generateSEOContent = async (
         // FIX: The function was incomplete, causing a 'must return a value' error. This completes the function by adding logic to handle all platforms, call the Gemini API, and parse the response.
         const parts: any[] = [];
         if (image) {
-             parts.push({
-                inlineData: {
-                    data: image.base64,
-                    mimeType: image.mimeType,
+            let imageData = image.base64;
+            let imageMimeType = image.mimeType;
+            
+            // Convert AVIF to JPEG since Gemini doesn't support AVIF
+            if (image.mimeType === 'image/avif' || image.mimeType === 'image/webp') {
+                try {
+                    // Create an image element to convert the format
+                    const img = new Image();
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    await new Promise((resolve, reject) => {
+                        img.onload = () => {
+                            canvas.width = img.width;
+                            canvas.height = img.height;
+                            ctx?.drawImage(img, 0, 0);
+                            
+                            // Convert to JPEG
+                            const jpegData = canvas.toDataURL('image/jpeg', 0.9);
+                            imageData = jpegData.split(',')[1]; // Remove data:image/jpeg;base64, prefix
+                            imageMimeType = 'image/jpeg';
+                            resolve(null);
+                        };
+                        img.onerror = reject;
+                        img.src = `data:${image.mimeType};base64,${image.base64}`;
+                    });
+                } catch (conversionError) {
+                    console.warn('Failed to convert image format, skipping image:', conversionError);
+                    // If conversion fails, skip the image rather than fail completely
+                    imageData = '';
+                    imageMimeType = '';
                 }
-            });
+            }
+            
+            if (imageData) {
+                parts.push({
+                    inlineData: {
+                        data: imageData,
+                        mimeType: imageMimeType,
+                    }
+                });
+            }
         }
         parts.push({
             text: `Based on the system instruction, generate the SEO content for the following product:\n\n---\n\n${description}`
