@@ -236,19 +236,19 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
             
             <Section title="4. Generate & Publish" iconName="bolt">
                 <div className="space-y-4">
-                    <button onClick={onGenerateSeo} disabled={isGeneratingSeo} title="Generate SEO Content (Ctrl/Cmd + G)" className="w-full px-6 py-3 text-base font-semibold rounded-xl bg-gradient-to-r from-primary-accent via-secondary to-accent text-white shadow-large hover-lift transition-all disabled:opacity-50 disabled:shadow-soft flex items-center justify-center">
+                    <button onClick={onGenerateSeo} disabled={isGeneratingSeo} title="Generate SEO Content (Ctrl/Cmd + G)" className="w-full px-6 py-3 text-base font-semibold rounded-xl bg-gradient-to-r from-primary-accent via-secondary to-[#ec4899] text-white shadow-lg hover-lift transition-all disabled:opacity-50 disabled:shadow-sm flex items-center justify-center">
                         {isGeneratingSeo ? <><Icon name="spinner" className="animate-spin mr-2" /> Generating...</> : <>⚡ Generate SEO Content</>}
                     </button>
                     <div className="flex gap-3">
-                        <button onClick={onDownloadImages} disabled={!isAnyImageSelected} title="Download selected images (Ctrl/Cmd + Shift + D)" className="flex-1 px-4 py-2.5 text-sm font-semibold rounded-xl text-text-primary bg-white/80 border border-border hover:bg-white focus:ring-primary-accent backdrop-blur-sm hover-lift transition-all disabled:opacity-50">
+                        <button onClick={onDownloadImages} disabled={!isAnyImageSelected} title="Download selected images (Ctrl/Cmd + Shift + D)" className="flex-1 px-4 py-2.5 text-sm font-semibold rounded-xl text-gray-700 bg-white border-2 border-gray-300 hover:bg-gray-50 hover:border-primary-accent focus:ring-2 focus:ring-primary-accent hover-lift transition-all disabled:opacity-40 disabled:cursor-not-allowed">
                             📥 Download
                         </button>
-                        <button onClick={onExport} disabled={!canExport} title={!canExport ? 'Please generate SEO content and select at least one variant.' : ''} className="flex-1 px-4 py-2.5 text-sm font-semibold rounded-xl text-text-primary bg-white/80 border border-border hover:bg-white focus:ring-primary-accent backdrop-blur-sm hover-lift transition-all disabled:opacity-50">
+                        <button onClick={onExport} disabled={!canExport} title={!canExport ? 'Please generate SEO content and select at least one variant.' : ''} className="flex-1 px-4 py-2.5 text-sm font-semibold rounded-xl text-gray-700 bg-white border-2 border-gray-300 hover:bg-gray-50 hover:border-primary-accent focus:ring-2 focus:ring-primary-accent hover-lift transition-all disabled:opacity-40 disabled:cursor-not-allowed">
                             📤 Export
                         </button>
                     </div>
                     
-                    <button onClick={onPublish} disabled={!canPublish || isPublishing} title={!canPublish ? 'Please fill Shopify details, generate SEO content and select variants.' : 'Publish to Shopify (Ctrl/Cmd + Alt + P)'} className="w-full px-6 py-3 text-base font-semibold rounded-xl bg-gradient-to-r from-success to-success/80 text-white shadow-glow hover-lift transition-all disabled:opacity-50 flex items-center justify-center">
+                    <button onClick={onPublish} disabled={!canPublish || isPublishing} title={!canPublish ? 'Please fill Shopify details, generate SEO content and select variants.' : 'Publish to Shopify (Ctrl/Cmd + Alt + P)'} className="w-full px-6 py-3 text-base font-semibold rounded-xl bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg hover:from-green-600 hover:to-green-700 hover-lift transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center">
                         {isPublishing ? <><Icon name="spinner" className="animate-spin mr-2" /> Publishing...</> : <>🚀 Publish to Shopify</>}
                     </button>
                 </div>
