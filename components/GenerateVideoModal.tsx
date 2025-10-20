@@ -7,7 +7,7 @@ import { ImageFile } from '../types';
 interface GenerateVideoModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onGenerate: (prompt: string, aspectRatio: string, resolution: string) => void;
+    onGenerate: (prompt: string, aspectRatio: string, resolution: string, videoLength: string) => void;
     image: ImageFile;
 }
 
@@ -29,17 +29,25 @@ const RESOLUTIONS = [
     { id: '1080p', name: 'Full HD (1080p)' },
 ];
 
+const VIDEO_LENGTHS = [
+    { id: '3', name: '3 seconds' },
+    { id: '5', name: '5 seconds' },
+    { id: '10', name: '10 seconds' },
+    { id: '15', name: '15 seconds' },
+];
+
 
 export const GenerateVideoModal: React.FC<GenerateVideoModalProps> = ({ isOpen, onClose, onGenerate, image }) => {
     const [selectedAction, setSelectedAction] = useState(VIDEO_ACTIONS[0]);
     const [customPrompt, setCustomPrompt] = useState('');
     const [aspectRatio, setAspectRatio] = useState(ASPECT_RATIOS[0].id);
     const [resolution, setResolution] = useState(RESOLUTIONS[0].id);
+    const [videoLength, setVideoLength] = useState(VIDEO_LENGTHS[1].id); // Default to 5 seconds
 
     if (!isOpen) return null;
 
     const handleGenerate = () => {
-        onGenerate(customPrompt || selectedAction.prompt, aspectRatio, resolution);
+        onGenerate(customPrompt || selectedAction.prompt, aspectRatio, resolution, videoLength);
     };
 
     return (
@@ -92,6 +100,12 @@ export const GenerateVideoModal: React.FC<GenerateVideoModalProps> = ({ isOpen, 
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Resolution</label>
                                     <select value={resolution} onChange={e => setResolution(e.target.value)} className="block w-full rounded-lg border-gray-300 shadow-sm focus:ring-primary-accent focus:border-primary-accent sm:text-sm p-2">
                                         {RESOLUTIONS.map(res => <option key={res.id} value={res.id}>{res.name}</option>)}
+                                    </select>
+                                </div>
+                                <div className="sm:col-span-2">
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Video Length</label>
+                                    <select value={videoLength} onChange={e => setVideoLength(e.target.value)} className="block w-full rounded-lg border-gray-300 shadow-sm focus:ring-primary-accent focus:border-primary-accent sm:text-sm p-2">
+                                        {VIDEO_LENGTHS.map(len => <option key={len.id} value={len.id}>{len.name}</option>)}
                                     </select>
                                 </div>
                             </div>
