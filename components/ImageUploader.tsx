@@ -82,7 +82,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ images, onImagesCh
         <div>
             <div className="flex justify-between items-center mb-2">
                 <div className="flex items-center gap-4">
-                    <label className="block text-sm font-medium text-gray-700">Product Images</label>
+                    <label className="block text-sm font-medium text-gray-700">Product Images & Videos</label>
                     {images.length > 0 && (
                         <button
                             onClick={handleToggleSelectAll}
@@ -119,9 +119,18 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ images, onImagesCh
                 {images.map((image, index) => (
                     <div key={image.id} className="relative group">
                         <div 
-                            className={`w-full aspect-square rounded-lg transition-all overflow-hidden ${image.selected ? 'ring-2 ring-offset-2 ring-primary-accent' : 'ring-1 ring-gray-200'}`}
+                            className={`w-full aspect-square rounded-lg transition-all overflow-hidden ${image.selected ? 'ring-2 ring-offset-2 ring-primary-accent' : 'ring-1 ring-gray-200'} bg-gray-900`}
                         >
-                            <img src={`data:${image.mimeType};base64,${image.base64}`} alt={image.name} className="w-full h-full object-cover" />
+                            {image.mimeType.startsWith('video/') ? (
+                                <video 
+                                    src={`data:${image.mimeType};base64,${image.base64}`}
+                                    className="w-full h-full object-cover"
+                                    controls
+                                    preload="metadata"
+                                />
+                            ) : (
+                                <img src={`data:${image.mimeType};base64,${image.base64}`} alt={image.name} className="w-full h-full object-cover" />
+                            )}
                         </div>
                         
                         {/* Selection Checkbox */}
@@ -206,7 +215,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ images, onImagesCh
                 type="file"
                 ref={fileInputRef}
                 multiple
-                accept="image/png, image/jpeg, image/webp"
+                accept="image/png, image/jpeg, image/webp, video/mp4, video/quicktime, video/webm, video/x-m4v"
                 onChange={handleFileChange}
                 className="hidden"
             />
