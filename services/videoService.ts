@@ -10,6 +10,7 @@ export const generateVideo = async (
     prompt: string,
     aspectRatio: string,
     resolution: string,
+    videoLength: string,
     onProgress: (message: string) => void
 ): Promise<VideoFile> => {
     try {
@@ -18,9 +19,11 @@ export const generateVideo = async (
 
         onProgress('Sending video generation request to the model...');
 
+        // Note: videoLength parameter is accepted but may not be directly supported by Veo API yet
+        // Future: Add duration to config when API supports it
         let operation = await ai.models.generateVideos({
             model: 'veo-3.1-fast-generate-preview',
-            prompt: prompt,
+            prompt: `${prompt} The video should be approximately ${videoLength} seconds long.`,
             image: {
                 imageBytes: image.base64,
                 mimeType: image.mimeType,
@@ -29,6 +32,7 @@ export const generateVideo = async (
                 numberOfVideos: 1,
                 resolution: resolution as ('720p' | '1080p'),
                 aspectRatio: aspectRatio as ('16:9' | '9:16'),
+                // duration: parseInt(videoLength), // Add when API supports it
             }
         });
 

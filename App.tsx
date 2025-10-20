@@ -252,12 +252,13 @@ function App() {
         setIsGenerateVideoModalOpen(true);
     };
     
-    const handleVideoGeneration = async (prompt: string, aspectRatio: string, resolution: string) => {
+    const handleVideoGeneration = async (prompt: string, aspectRatio: string, resolution: string, videoLength: string) => {
         if (!imageForVideo) return;
         setIsGeneratingVideo(true);
         setIsGenerateVideoModalOpen(false);
+        showToast('info', `Generating ${videoLength}s video...`);
         try {
-            const newVideo = await generateVideo(imageForVideo, prompt, aspectRatio, resolution, (message) => {
+            const newVideo = await generateVideo(imageForVideo, prompt, aspectRatio, resolution, videoLength, (message) => {
                 showToast('info', message);
             });
             onProductDataChange('videos', [...productData.videos, newVideo]);
