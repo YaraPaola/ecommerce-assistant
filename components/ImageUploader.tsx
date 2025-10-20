@@ -28,6 +28,7 @@ const fileToBase64 = (file: File): Promise<string> => {
 
 export const ImageUploader: React.FC<ImageUploaderProps> = ({ images, onImagesChange, onEnhanceClick, isEnhancing, onGenerateVideoClick, isGeneratingVideo, onGenerateMusicClick, isGeneratingMusic, onMontageClick }) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const [openMenuId, setOpenMenuId] = React.useState<string | null>(null);
 
     const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
@@ -114,19 +115,20 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ images, onImagesCh
                     </Button>
                 </div>
             </div>
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
                 {images.map((image, index) => (
-                    <div key={image.id} className="relative group aspect-square">
+                    <div key={image.id} className="relative group">
                         <div 
-                            className={`w-full h-full rounded-lg transition-all overflow-hidden ${image.selected ? 'ring-2 ring-offset-2 ring-primary-accent' : 'ring-1 ring-gray-200'}`}
+                            className={`w-full aspect-square rounded-lg transition-all overflow-hidden ${image.selected ? 'ring-2 ring-offset-2 ring-primary-accent' : 'ring-1 ring-gray-200'}`}
                         >
                             <img src={`data:${image.mimeType};base64,${image.base64}`} alt={image.name} className="w-full h-full object-cover" />
                         </div>
                         
+                        {/* Selection Checkbox */}
                         <button
                             onClick={() => toggleSelection(image.id)}
-                            className={`absolute top-2 right-2 z-20 w-6 h-6 rounded-full flex items-center justify-center border-2 transition-colors
-                                ${image.selected ? 'bg-primary-accent border-primary-accent' : 'bg-white/50 border-gray-400 group-hover:border-gray-600'}
+                            className={`absolute top-2 left-2 z-20 w-7 h-7 rounded-full flex items-center justify-center border-2 transition-colors shadow-md
+                                ${image.selected ? 'bg-primary-accent border-primary-accent' : 'bg-white/90 border-gray-400 group-hover:border-gray-600'}
                             `}
                             aria-label={`Select image ${image.name}`}
                             title={image.selected ? `Deselect image` : `Select image`}
@@ -134,22 +136,61 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ images, onImagesCh
                             {image.selected && <Icon name="check" className="w-4 h-4 text-white" />}
                         </button>
                         
-                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all rounded-lg flex items-center justify-center gap-1 z-10">
-                            <button onClick={(e) => { e.stopPropagation(); onEnhanceClick(image); }} disabled={isEnhancing} className="p-2 bg-white/80 rounded-full text-indigo-600 hover:bg-white opacity-0 group-hover:opacity-100 transition-opacity" title="Enhance Image">
-                                <Icon name="sparkles" />
-                            </button>
-                            <button onClick={(e) => { e.stopPropagation(); onGenerateVideoClick(image); }} disabled={isGeneratingVideo} className="p-2 bg-white/80 rounded-full text-purple-600 hover:bg-white opacity-0 group-hover:opacity-100 transition-opacity" title="Create Video">
-                                <Icon name="film" />
-                            </button>
-                            <button onClick={(e) => handleDownloadClick(e, image)} className="p-2 bg-white/80 rounded-full text-green-600 hover:bg-white opacity-0 group-hover:opacity-100 transition-opacity" title="Download Image">
-                                <Icon name="download" />
-                            </button>
-                            <button onClick={(e) => { e.stopPropagation(); removeImage(image.id); }} className="p-2 bg-white/80 rounded-full text-red-500 hover:bg-white opacity-0 group-hover:opacity-100 transition-opacity" title="Remove Image">
-                                <Icon name="trash" />
-                            </button>
-                        </div>
+                        {/* Actions Menu Button */}
+                        <button
+                            onClick={(e) => { e.stopPropagation(); setOpenMenuId(openMenuId === image.id ? null : image.id); }}
+                            className="absolute top-2 right-2 z-20 w-9 h-9 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-md transition-all opacity-0 group-hover:opacity-100"
+                            title="Actions"
+                        >
+                            <Icon name="menu" className="w-5 h-5 text-gray-700" />
+                        </button>
+                        
+                        {/* Dropdown Menu */}
+                        {openMenuId === image.id && (
+                            <>
+                                <div 
+                                    className="fixed inset-0 z-30" 
+                                    onClick={() => setOpenMenuId(null)}
+                                />
+                                <div className="absolute top-12 right-2 z-40 bg-white rounded-lg shadow-xl border border-gray-200 py-1 min-w-[160px]">
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); setOpenMenuId(null); onEnhanceClick(image); }}
+                                        disabled={isEnhancing}
+                                        className="w-full px-4 py-2.5 text-left flex items-center gap-3 hover:bg-violet-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                    >
+                                        <Icon name="sparkles" className="w-4 h-4 text-indigo-600" />
+                                        <span className="text-sm font-medium text-gray-700">Enhance Image</span>
+                                    </button>
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); setOpenMenuId(null); onGenerateVideoClick(image); }}
+                                        disabled={isGeneratingVideo}
+                                        className="w-full px-4 py-2.5 text-left flex items-center gap-3 hover:bg-purple-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                    >
+                                        <Icon name="film" className="w-4 h-4 text-purple-600" />
+                                        <span className="text-sm font-medium text-gray-700">Create Video</span>
+                                    </button>
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); setOpenMenuId(null); handleDownloadClick(e, image); }}
+                                        className="w-full px-4 py-2.5 text-left flex items-center gap-3 hover:bg-green-50 transition-colors"
+                                    >
+                                        <Icon name="download" className="w-4 h-4 text-green-600" />
+                                        <span className="text-sm font-medium text-gray-700">Download</span>
+                                    </button>
+                                    <div className="border-t border-gray-200 my-1" />
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); setOpenMenuId(null); removeImage(image.id); }}
+                                        className="w-full px-4 py-2.5 text-left flex items-center gap-3 hover:bg-red-50 transition-colors"
+                                    >
+                                        <Icon name="trash" className="w-4 h-4 text-red-500" />
+                                        <span className="text-sm font-medium text-red-600">Delete Image</span>
+                                    </button>
+                                </div>
+                            </>
+                        )}
+                        
+                        {/* Primary Badge */}
                         {index === 0 && (
-                             <span className="absolute top-1 left-1 bg-primary-accent text-white text-xs font-bold px-2 py-0.5 rounded-full z-10">Primary</span>
+                             <span className="absolute top-2 left-11 bg-primary-accent text-white text-xs font-bold px-2 py-0.5 rounded-full z-10">Primary</span>
                         )}
                     </div>
                 ))}

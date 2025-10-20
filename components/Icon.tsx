@@ -24,7 +24,8 @@ const iconPaths: { [key: string]: string } = {
     sparkles: 'M5 3v4M3 5h4M5 17v4m-2-2h4M11 3v4M9 5h4M11 17v4m-2-2h4M19 3v4M17 5h4M19 17v4m-2-2h4',
     play: 'M5 3l14 9-14 9V3z',
     pause: 'M6 4h4v16H6zM14 4h4v16h-4z',
-    'linear-focus': 'M4 7h16M4 17h16'
+    'linear-focus': 'M4 7h16M4 17h16',
+    menu: 'M4 6h16M4 12h16M4 18h16'
 };
 
 const iconProps: { [key: string]: React.SVGProps<SVGSVGElement> } = {
