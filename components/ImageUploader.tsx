@@ -37,14 +37,26 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ images, onImagesCh
             for (let i = 0; i < files.length; i++) {
                 const file = files.item(i);
                 if (file) {
-                    const base64 = await fileToBase64(file);
-                    newImages.push({
-                        id: crypto.randomUUID(),
-                        name: file.name,
-                        base64: base64.split(',')[1],
-                        mimeType: file.type,
-                        selected: true,
-                    });
+                    // For videos, use blob URL instead of base64 for better performance
+                    if (file.type.startsWith('video/')) {
+                        const blobUrl = URL.createObjectURL(file);
+                        newImages.push({
+                            id: crypto.randomUUID(),
+                            name: file.name,
+                            base64: blobUrl, // Store blob URL in base64 field for videos
+                            mimeType: file.type,
+                            selected: true,
+                        });
+                    } else {
+                        const base64 = await fileToBase64(file);
+                        newImages.push({
+                            id: crypto.randomUUID(),
+                            name: file.name,
+                            base64: base64.split(',')[1],
+                            mimeType: file.type,
+                            selected: true,
+                        });
+                    }
                 }
             }
             onImagesChange([...images, ...newImages]);
@@ -123,7 +135,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ images, onImagesCh
                         >
                             {image.mimeType.startsWith('video/') ? (
                                 <video 
-                                    src={`data:${image.mimeType};base64,${image.base64}`}
+                                    src={image.base64.startsWith('blob:') ? image.base64 : `data:${image.mimeType};base64,${image.base64}`}
                                     className="w-full h-full object-cover"
                                     controls
                                     preload="metadata"
