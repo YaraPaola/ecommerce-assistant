@@ -341,7 +341,24 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(({ im
                 ctx.fillText(textOverlay.text, x, y);
             }
         }
-    }, [rotation, brightness, contrast, saturate, sepia, blur, pixelate, cropRatio, focusArea, textOverlay]);
+
+        // Draw eraser path
+        if (eraserPath.length > 0) {
+            ctx.save();
+            ctx.strokeStyle = 'rgba(255, 0, 0, 0.6)';
+            ctx.lineWidth = eraserSize;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            
+            ctx.beginPath();
+            ctx.moveTo(eraserPath[0].x * canvas.width, eraserPath[0].y * canvas.height);
+            for (let i = 1; i < eraserPath.length; i++) {
+                ctx.lineTo(eraserPath[i].x * canvas.width, eraserPath[i].y * canvas.height);
+            }
+            ctx.stroke();
+            ctx.restore();
+        }
+    }, [rotation, brightness, contrast, saturate, sepia, blur, pixelate, cropRatio, focusArea, textOverlay, eraserPath, eraserSize]);
 
     useEffect(() => {
         const img = imageRef.current;
@@ -385,6 +402,13 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(({ im
         const coords = getCanvasRelativeCoords(e);
         if (!coords) return;
         
+        // Handle eraser mode
+        if (isEraserMode) {
+            setIsErasing(true);
+            setEraserPath([coords]);
+            return;
+        }
+        
         if (textOverlay && isClickOnText(coords)) {
             setIsDraggingText(true);
             textDragStartOffset.current = { x: coords.x - textOverlay.x, y: coords.y - textOverlay.y };
@@ -422,6 +446,12 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(({ im
         const coords = getCanvasRelativeCoords(e);
         if (!coords) return;
 
+        // Handle eraser drawing
+        if (isErasing && isEraserMode) {
+            setEraserPath(prev => [...prev, coords]);
+            return;
+        }
+
         if (isDraggingText && textOverlay) {
             setTextOverlay({ ...textOverlay, x: coords.x - textDragStartOffset.current.x, y: coords.y - textDragStartOffset.current.y });
             return;
@@ -451,6 +481,7 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(({ im
     };
 
     const handleMouseUp = () => {
+        setIsErasing(false);
         setDragState(null);
         setIsDraggingText(false);
         setIsHoveringText(false);
@@ -595,7 +626,7 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(({ im
     
     useEffect(draw, [draw]);
 
-    const cursorStyle = isDraggingText || dragState ? 'grabbing' : (isHoveringText ? 'move' : 'grab');
+    const cursorStyle = isEraserMode ? 'crosshair' : (isDraggingText || dragState ? 'grabbing' : (isHoveringText ? 'move' : 'grab'));
 
     return (
         <div className="w-full h-full flex flex-col gap-4">
