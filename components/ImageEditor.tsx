@@ -31,11 +31,33 @@ interface TextOverlay {
     size: number; // relative font size
     color: string;
     font: string;
+    // Advanced styling
+    strokeColor: string;
+    strokeWidth: number;
+    shadowColor: string;
+    shadowBlur: number;
+    shadowOffsetX: number;
+    shadowOffsetY: number;
+    effect: 'none' | 'outline' | '3d' | 'glow' | 'shadow';
 }
 
 const CROP_RATIOS = [
     { name: 'None', value: null }, { name: '1:1', value: 1 / 1 }, { name: '4:3', value: 4 / 3 },
     { name: '16:9', value: 16 / 9 }, { name: '9:16', value: 9 / 16 },
+];
+
+const FONTS = [
+    'Impact', 'Arial', 'Helvetica', 'Times New Roman', 'Georgia', 'Verdana',
+    'Courier New', 'Comic Sans MS', 'Trebuchet MS', 'Arial Black', 'Palatino',
+    'Garamond', 'Bookman', 'Avant Garde', 'Brush Script MT', 'Copperplate'
+];
+
+const TEXT_EFFECTS = [
+    { id: 'none', name: 'None' },
+    { id: 'outline', name: 'Outline' },
+    { id: '3d', name: '3D Effect' },
+    { id: 'glow', name: 'Glow' },
+    { id: 'shadow', name: 'Drop Shadow' }
 ];
 
 const ControlButton: React.FC<React.ButtonHTMLAttributes<HTMLButtonElement> & { active?: boolean }> = ({ children, active, ...props }) => (
@@ -76,6 +98,12 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(({ im
 
     // Text Overlay
     const [textOverlay, setTextOverlay] = useState<TextOverlay | null>(null);
+
+    // AI Object Remover
+    const [isEraserMode, setIsEraserMode] = useState(false);
+    const [eraserSize, setEraserSize] = useState(30);
+    const [eraserPath, setEraserPath] = useState<{x: number, y: number}[]>([]);
+    const [isErasing, setIsErasing] = useState(false);
 
     const [colorPrompt, setColorPrompt] = useState('');
     
@@ -267,16 +295,51 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(({ im
 
         if (textOverlay) {
             const scaledSize = textOverlay.size * (canvas.width / 1000);
+            const x = textOverlay.x * canvas.width;
+            const y = textOverlay.y * canvas.height;
+            
             ctx.font = `bold ${scaledSize}px ${textOverlay.font}`;
-            ctx.fillStyle = textOverlay.color;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.shadowColor = 'rgba(0,0,0,0.7)';
-            ctx.shadowBlur = 5;
-            ctx.shadowOffsetX = 2;
-            ctx.shadowOffsetY = 2;
-            ctx.fillText(textOverlay.text, textOverlay.x * canvas.width, textOverlay.y * canvas.height);
-            ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0; ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 0;
+            
+            // Apply text effects
+            if (textOverlay.effect === 'outline') {
+                ctx.strokeStyle = textOverlay.strokeColor;
+                ctx.lineWidth = textOverlay.strokeWidth || 3;
+                ctx.strokeText(textOverlay.text, x, y);
+                ctx.fillStyle = textOverlay.color;
+                ctx.fillText(textOverlay.text, x, y);
+            } else if (textOverlay.effect === '3d') {
+                // 3D effect - multiple layers
+                const depth = textOverlay.strokeWidth || 5;
+                ctx.fillStyle = textOverlay.strokeColor;
+                for (let i = depth; i > 0; i--) {
+                    ctx.fillText(textOverlay.text, x + i, y + i);
+                }
+                ctx.fillStyle = textOverlay.color;
+                ctx.fillText(textOverlay.text, x, y);
+            } else if (textOverlay.effect === 'glow') {
+                ctx.shadowColor = textOverlay.color;
+                ctx.shadowBlur = textOverlay.shadowBlur || 20;
+                ctx.fillStyle = textOverlay.color;
+                ctx.fillText(textOverlay.text, x, y);
+                ctx.shadowBlur = 0;
+            } else if (textOverlay.effect === 'shadow') {
+                ctx.shadowColor = textOverlay.shadowColor;
+                ctx.shadowBlur = textOverlay.shadowBlur;
+                ctx.shadowOffsetX = textOverlay.shadowOffsetX;
+                ctx.shadowOffsetY = textOverlay.shadowOffsetY;
+                ctx.fillStyle = textOverlay.color;
+                ctx.fillText(textOverlay.text, x, y);
+                ctx.shadowColor = 'transparent';
+                ctx.shadowBlur = 0;
+                ctx.shadowOffsetX = 0;
+                ctx.shadowOffsetY = 0;
+            } else {
+                // No effect - simple text
+                ctx.fillStyle = textOverlay.color;
+                ctx.fillText(textOverlay.text, x, y);
+            }
         }
     }, [rotation, brightness, contrast, saturate, sepia, blur, pixelate, cropRatio, focusArea, textOverlay]);
 
@@ -478,12 +541,49 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(({ im
             }
             if (textOverlay) {
                 const scaledSize = textOverlay.size * (finalCanvas.width / 1000);
+                const x = textOverlay.x * finalCanvas.width;
+                const y = textOverlay.y * finalCanvas.height;
+                
                 finalCtx.font = `bold ${scaledSize}px ${textOverlay.font}`;
-                finalCtx.fillStyle = textOverlay.color;
-                finalCtx.textAlign = 'center'; finalCtx.textBaseline = 'middle';
-                finalCtx.shadowColor = 'rgba(0,0,0,0.7)'; finalCtx.shadowBlur = 5 * (finalCanvas.width / 1000);
-                finalCtx.shadowOffsetX = 2 * (finalCanvas.width / 1000); finalCtx.shadowOffsetY = 2 * (finalCanvas.width / 1000);
-                finalCtx.fillText(textOverlay.text, textOverlay.x * finalCanvas.width, textOverlay.y * finalCanvas.height);
+                finalCtx.textAlign = 'center';
+                finalCtx.textBaseline = 'middle';
+                
+                // Apply same text effects as preview
+                if (textOverlay.effect === 'outline') {
+                    finalCtx.strokeStyle = textOverlay.strokeColor;
+                    finalCtx.lineWidth = textOverlay.strokeWidth || 3;
+                    finalCtx.strokeText(textOverlay.text, x, y);
+                    finalCtx.fillStyle = textOverlay.color;
+                    finalCtx.fillText(textOverlay.text, x, y);
+                } else if (textOverlay.effect === '3d') {
+                    const depth = textOverlay.strokeWidth || 5;
+                    finalCtx.fillStyle = textOverlay.strokeColor;
+                    for (let i = depth; i > 0; i--) {
+                        finalCtx.fillText(textOverlay.text, x + i, y + i);
+                    }
+                    finalCtx.fillStyle = textOverlay.color;
+                    finalCtx.fillText(textOverlay.text, x, y);
+                } else if (textOverlay.effect === 'glow') {
+                    finalCtx.shadowColor = textOverlay.color;
+                    finalCtx.shadowBlur = textOverlay.shadowBlur || 20;
+                    finalCtx.fillStyle = textOverlay.color;
+                    finalCtx.fillText(textOverlay.text, x, y);
+                    finalCtx.shadowBlur = 0;
+                } else if (textOverlay.effect === 'shadow') {
+                    finalCtx.shadowColor = textOverlay.shadowColor;
+                    finalCtx.shadowBlur = textOverlay.shadowBlur;
+                    finalCtx.shadowOffsetX = textOverlay.shadowOffsetX;
+                    finalCtx.shadowOffsetY = textOverlay.shadowOffsetY;
+                    finalCtx.fillStyle = textOverlay.color;
+                    finalCtx.fillText(textOverlay.text, x, y);
+                    finalCtx.shadowColor = 'transparent';
+                    finalCtx.shadowBlur = 0;
+                    finalCtx.shadowOffsetX = 0;
+                    finalCtx.shadowOffsetY = 0;
+                } else {
+                    finalCtx.fillStyle = textOverlay.color;
+                    finalCtx.fillText(textOverlay.text, x, y);
+                }
             }
 
             return {
@@ -552,23 +652,95 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(({ im
                 </div>
                  <div className="border-t border-gray-300 pt-3 space-y-3">
                     <div className="flex items-center justify-between">
-                        <h4 className="text-sm font-medium text-gray-700">Text Overlay</h4>
+                        <h4 className="text-sm font-medium text-gray-700">✨ Text Overlay (Canva-Style)</h4>
                         {textOverlay ? (
                             <Button onClick={() => setTextOverlay(null)} variant="secondary" className="px-2 py-1 text-xs bg-red-100 text-red-700 border-red-100 hover:bg-red-200">Remove</Button>
                         ) : (
-                            <Button onClick={() => setTextOverlay({ text: 'Your Text Here', x: 0.5, y: 0.5, size: 50, color: '#FFFFFF', font: 'Impact' })} variant="secondary" className="px-2 py-1 text-xs">Add Text</Button>
+                            <Button onClick={() => setTextOverlay({ 
+                                text: 'Your Text Here', x: 0.5, y: 0.5, size: 50, color: '#FFFFFF', font: 'Impact',
+                                strokeColor: '#000000', strokeWidth: 0, shadowColor: 'rgba(0,0,0,0.7)',
+                                shadowBlur: 5, shadowOffsetX: 2, shadowOffsetY: 2, effect: 'none'
+                            })} variant="secondary" className="px-2 py-1 text-xs">Add Text</Button>
                         )}
                     </div>
                     {textOverlay && (
-                        <div className="space-y-2">
-                            <input type="text" value={textOverlay.text} onChange={e => setTextOverlay({ ...textOverlay, text: e.target.value })} className="block w-full rounded-lg border-gray-300 bg-white text-gray-900 shadow-sm focus:ring-primary-accent focus:border-primary-accent sm:text-sm px-3 py-2"/>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="flex items-center gap-2">
-                                    <label className="text-sm text-gray-700">Color:</label>
-                                    <input type="color" value={textOverlay.color} onChange={e => setTextOverlay({ ...textOverlay, color: e.target.value })} className="w-10 h-8 p-1 bg-white border border-gray-300 rounded-lg cursor-pointer"/>
+                        <div className="space-y-3">
+                            <input type="text" value={textOverlay.text} onChange={e => setTextOverlay({ ...textOverlay, text: e.target.value })} 
+                                className="block w-full rounded-lg border-gray-300 bg-white text-gray-900 shadow-sm focus:ring-primary-accent focus:border-primary-accent sm:text-sm px-3 py-2"
+                                placeholder="Enter your text..."/>
+                            
+                            <div className="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label className="text-xs text-gray-600">Font Family</label>
+                                    <select value={textOverlay.font} onChange={e => setTextOverlay({ ...textOverlay, font: e.target.value })}
+                                        className="mt-1 block w-full rounded-lg border-gray-300 bg-white text-sm shadow-sm focus:ring-primary-accent focus:border-primary-accent">
+                                        {FONTS.map(font => (
+                                            <option key={font} value={font} style={{fontFamily: font}}>{font}</option>
+                                        ))}
+                                    </select>
                                 </div>
-                                <SliderControl label="Size" min={10} max={150} unit="pt" value={textOverlay.size} onChange={e => setTextOverlay({ ...textOverlay, size: Number(e.target.value) })} />
+                                <div>
+                                    <label className="text-xs text-gray-600">Text Effect</label>
+                                    <select value={textOverlay.effect} onChange={e => setTextOverlay({ ...textOverlay, effect: e.target.value as any })}
+                                        className="mt-1 block w-full rounded-lg border-gray-300 bg-white text-sm shadow-sm focus:ring-primary-accent focus:border-primary-accent">
+                                        {TEXT_EFFECTS.map(effect => (
+                                            <option key={effect.id} value={effect.id}>{effect.name}</option>
+                                        ))}
+                                    </select>
+                                </div>
                             </div>
+                            
+                            <div className="grid grid-cols-2 gap-3">
+                                <div className="flex items-center gap-2">
+                                    <label className="text-xs text-gray-600">Text Color:</label>
+                                    <input type="color" value={textOverlay.color} onChange={e => setTextOverlay({ ...textOverlay, color: e.target.value })} 
+                                        className="w-10 h-8 p-1 bg-white border border-gray-300 rounded-lg cursor-pointer"/>
+                                </div>
+                                {(textOverlay.effect === 'outline' || textOverlay.effect === '3d') && (
+                                    <div className="flex items-center gap-2">
+                                        <label className="text-xs text-gray-600">Stroke Color:</label>
+                                        <input type="color" value={textOverlay.strokeColor} onChange={e => setTextOverlay({ ...textOverlay, strokeColor: e.target.value })} 
+                                            className="w-10 h-8 p-1 bg-white border border-gray-300 rounded-lg cursor-pointer"/>
+                                    </div>
+                                )}
+                            </div>
+                            
+                            <div className="grid grid-cols-2 gap-4">
+                                <SliderControl label="Size" min={10} max={150} unit="pt" value={textOverlay.size} onChange={e => setTextOverlay({ ...textOverlay, size: Number(e.target.value) })} />
+                                {(textOverlay.effect === 'outline' || textOverlay.effect === '3d') && (
+                                    <SliderControl label="Stroke Width" min={0} max={10} unit="px" value={textOverlay.strokeWidth} onChange={e => setTextOverlay({ ...textOverlay, strokeWidth: Number(e.target.value) })} />
+                                )}
+                                {(textOverlay.effect === 'shadow' || textOverlay.effect === 'glow') && (
+                                    <SliderControl label="Shadow Blur" min={0} max={30} unit="px" value={textOverlay.shadowBlur} onChange={e => setTextOverlay({ ...textOverlay, shadowBlur: Number(e.target.value) })} />
+                                )}
+                            </div>
+                            <p className="text-xs text-gray-500 italic">💡 Drag text to reposition it on the canvas</p>
+                        </div>
+                    )}
+                </div>
+                
+                <div className="border-t border-gray-300 pt-3 space-y-3">
+                    <div className="flex items-center justify-between">
+                        <h4 className="text-sm font-medium text-gray-700">🎨 AI Object Remover</h4>
+                        <ControlButton onClick={() => setIsEraserMode(!isEraserMode)} active={isEraserMode} title="Toggle Eraser Mode">
+                            <Icon name={isEraserMode ? 'check' : 'trash'} />
+                        </ControlButton>
+                    </div>
+                    {isEraserMode && (
+                        <div className="space-y-2 bg-purple-50 p-3 rounded-lg">
+                            <p className="text-xs text-gray-600">Draw over objects or text you want to remove. The AI will intelligently fill the area.</p>
+                            <SliderControl label="Brush Size" min={5} max={100} unit="px" value={eraserSize} onChange={e => setEraserSize(Number(e.target.value))} />
+                            {eraserPath.length > 0 && (
+                                <div className="flex gap-2">
+                                    <Button onClick={() => {/* Apply AI removal */}} variant="primary" className="flex-1">
+                                        <Icon name="sparkles" className="mr-1" /> Remove Selected
+                                    </Button>
+                                    <Button onClick={() => setEraserPath([])} variant="secondary" className="flex-1">
+                                        Clear Selection
+                                    </Button>
+                                </div>
+                            )}
+                            <p className="text-xs text-orange-600">⚠️ Coming soon: AI-powered smart removal</p>
                         </div>
                     )}
                 </div>
