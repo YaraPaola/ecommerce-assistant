@@ -565,6 +565,15 @@ function App() {
                     isOpen={isVideoEditorOpen}
                     onClose={() => setIsVideoEditorOpen(false)}
                     video={videoToEdit}
+                    onSave={(editedVideo) => {
+                        // In a real application, this would be a new video file from a service
+                        // For now, we'll just replace the old video with the (unmodified) one
+                        // passed back from the modal.
+                        onProductDataChange('videos', productData.videos.map(vid => 
+                            vid.id === editedVideo.id ? { ...vid, url: editedVideo.base64 } : vid
+                        ));
+                        setIsVideoEditorOpen(false);
+                    }}
                 />
             )}
 
