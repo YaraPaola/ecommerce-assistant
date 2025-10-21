@@ -120,7 +120,7 @@ function App() {
                     name: optionName,
                     priceModifier: 0,
                     open: true,
-                    options: ALL_COLORS_FROM_VARIANTS.map(color => ({ name: color, selected: true }))
+                    options: ALL_COLORS_FROM_VARIANTS.map(colorName => ({ name: colorName, selected: true }))
                 };
                 showToast('success', `New variant group "${optionName}" added with all available colors!`);
                 return { ...prev, variants: [...prev.variants, newGroup] };

@@ -1,8 +1,9 @@
 
 import React from 'react';
-import { FinishGroup } from '../types';
+import { FinishGroup, FinishOption } from '../types';
 import { Icon } from './Icon';
 import { Button } from './Button';
+import { COLOR_TO_FINISH_MAP, initialVariantOptions } from '../constants';
 
 interface VariantSelectorProps {
     basePrice: number;
@@ -135,12 +136,26 @@ export const VariantSelector: React.FC<VariantSelectorProps> = ({
                                         </div>
                                     </div>
                                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                                        {group.options.map(option => (
-                                            <div key={option.name} className="flex items-center">
-                                                <input id={`${group.id}-${option.name}`} type="checkbox" checked={option.selected} onChange={() => handleOptionToggle(group.id, option.name)} className="h-4 w-4 text-primary-accent focus:ring-primary-accent border-gray-300 rounded" />
-                                                <label htmlFor={`${group.id}-${option.name}`} className="ml-2 block text-sm text-gray-700">{option.name}</label>
-                                            </div>
-                                        ))}
+                                        {group.options
+                                            .sort((a, b) => {
+                                                const finishA = COLOR_TO_FINISH_MAP.get(a.name) || '';
+                                                const finishB = COLOR_TO_FINISH_MAP.get(b.name) || '';
+                                                if (finishA !== finishB) {
+                                                    return finishA.localeCompare(finishB);
+                                                }
+                                                return a.name.localeCompare(b.name);
+                                            })
+                                            .map(option => (
+                                                <div key={option.name} className="flex items-center">
+                                                    <input id={`${group.id}-${option.name}`} type="checkbox" checked={option.selected} onChange={() => handleOptionToggle(group.id, option.name)} className="h-4 w-4 text-primary-accent focus:ring-primary-accent border-gray-300 rounded" />
+                                                    <label htmlFor={`${group.id}-${option.name}`} className="ml-2 block text-sm text-gray-700">
+                                                        {option.name} 
+                                                        {COLOR_TO_FINISH_MAP.has(option.name) && (
+                                                            <span className="text-gray-500 text-xs ml-1">({COLOR_TO_FINISH_MAP.get(option.name)})</span>
+                                                        )}
+                                                    </label>
+                                                </div>
+                                            ))}
                                     </div>
                                     {group.id === 'gloss' && ( // Only show custom add for 'Gloss' for now
                                         <div className="mt-4 border-t border-gray-200 pt-4">

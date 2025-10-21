@@ -240,3 +240,14 @@ export const ALL_COLORS_FROM_VARIANTS = (() => {
     });
     return Array.from(uniqueColors).sort((a, b) => a.localeCompare(b));
 })();
+
+// Map to store color name to its finish type
+export const COLOR_TO_FINISH_MAP = (() => {
+    const map = new Map<string, string>();
+    initialVariantOptions.forEach(group => {
+        group.options.forEach(option => {
+            map.set(option.name, group.name);
+        });
+    });
+    return map;
+})();
