@@ -91,21 +91,50 @@ function App() {
         setProductData(prev => ({ ...prev, variants }));
     };
 
-    const handleAddCustomOption = (groupName: string, optionName: string) => {
+    const handleAddCustomOption = (groupIdentifier: string, optionName: string) => {
         setProductData(prev => {
-            const updatedVariants = prev.variants.map(group => {
-                if (group.name === groupName) {
-                    // Check if option already exists to prevent duplicates
-                    if (!group.options.some(option => option.name === optionName)) {
-                        return {
-                            ...group,
-                            options: [...group.options, { name: optionName, selected: true }]
-                        };
-                    }
+            // If groupIdentifier is 'new_group', create a new variant group
+            if (groupIdentifier === 'new_group') {
+                const newGroupId = optionName.toLowerCase().replace(/\s+/g, '_');
+                // Check if a group with this ID already exists
+                if (prev.variants.some(group => group.id === newGroupId)) {
+                    showToast('error', `Variant group "${optionName}" already exists.`);
+                    return prev;
                 }
-                return group;
-            });
-            return { ...prev, variants: updatedVariants };
+
+                const newGroup: FinishGroup = {
+                    id: newGroupId,
+                    name: optionName,
+                    priceModifier: 0,
+                    open: true,
+                    options: [
+                        { name: 'BLACK', selected: true },
+                        { name: 'WHITE', selected: true },
+                        { name: 'GREY', selected: true },
+                        { name: 'CREAM', selected: true },
+                    ]
+                };
+                showToast('success', `New variant group "${optionName}" added!`);
+                return { ...prev, variants: [...prev.variants, newGroup] };
+            } else {
+                // Otherwise, add a custom option to an existing group
+                const updatedVariants = prev.variants.map(group => {
+                    if (group.name === groupIdentifier) {
+                        // Check if option already exists to prevent duplicates
+                        if (!group.options.some(option => option.name === optionName)) {
+                            showToast('success', `Custom color "${optionName}" added to "${group.name}"!`);
+                            return {
+                                ...group,
+                                options: [...group.options, { name: optionName, selected: true }]
+                            };
+                        } else {
+                            showToast('info', `Color "${optionName}" already exists in "${group.name}".`);
+                        }
+                    }
+                    return group;
+                });
+                return { ...prev, variants: updatedVariants };
+            }
         });
     };
 

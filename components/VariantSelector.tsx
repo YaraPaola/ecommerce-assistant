@@ -79,7 +79,35 @@ export const VariantSelector: React.FC<VariantSelectorProps> = ({
                 <input id="select-all" type="checkbox" checked={allSelected} onChange={handleSelectAllVariants} className="h-4 w-4 text-primary-accent focus:ring-primary-accent border-gray-300 rounded" />
                 <label htmlFor="select-all" className="ml-2 block text-sm text-gray-900">Select All Variants</label>
             </div>
-            <div className="space-y-2">
+
+            <div className="mt-6 border-t border-gray-200 pt-6">
+                <label htmlFor="new-variant-group-name" className="block text-sm font-medium text-gray-700 mb-2">Add New Variant Group (e.g., "Accent Color")</label>
+                <div className="flex gap-2">
+                    <input
+                        type="text"
+                        id="new-variant-group-name"
+                        value={newCustomColor} // Reusing state for simplicity, could be separate
+                        onChange={(e) => setNewCustomColor(e.target.value)}
+                        className="flex-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-primary-accent focus:border-primary-accent sm:text-sm p-2"
+                        placeholder="Enter new group name"
+                    />
+                    <Button 
+                        onClick={() => {
+                            if (newCustomColor.trim()) {
+                                onAddCustomOption('new_group', newCustomColor.trim()); // Use a special group name to signal new group creation
+                                setNewCustomColor('');
+                            }
+                        }}
+                        variant="secondary"
+                        size="sm"
+                        disabled={!newCustomColor.trim()}
+                    >
+                        Add Group
+                    </Button>
+                </div>
+            </div>
+
+            <div className="space-y-2 mt-6">
                 {finishGroups.map(group => {
                     const selectedCount = group.options.filter(o => o.selected).length;
                     const allInGroupSelected = selectedCount === group.options.length;
