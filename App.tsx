@@ -11,8 +11,8 @@ import { VideoPreviewModal } from './components/VideoPreviewModal';
 import { ImageSelectionModal } from './components/ImageSelectionModal';
 import { Toast } from './components/Toast';
 
-import { ProductData, SEOContent, ImageFile, VideoFile, ToastInfo, FinishGroup } from './types';
-import { BACKGROUND_PRESETS, initialVariantOptions } from './constants';
+import { ProductData, SEOContent, ImageFile, VideoFile, ToastInfo, FinishGroup, FinishOption } from './types';
+import { BACKGROUND_PRESETS, initialVariantOptions, ALL_COLORS_FROM_VARIANTS } from './constants';
 
 import { generateSEOContent } from './services/geminiService';
 import { enhanceImage, createImageMontage } from './services/imageService';
@@ -102,19 +102,27 @@ function App() {
                     return prev;
                 }
 
+                // Collect all unique color options from initialVariantOptions
+                const allUniqueColors: FinishOption[] = [];
+                const seenColors = new Set<string>();
+
+                initialVariantOptions.forEach(group => {
+                    group.options.forEach(option => {
+                        if (!seenColors.has(option.name)) {
+                            allUniqueColors.push({ name: option.name, selected: true }); // All selected by default
+                            seenColors.add(option.name);
+                        }
+                    });
+                });
+
                 const newGroup: FinishGroup = {
                     id: newGroupId,
                     name: optionName,
                     priceModifier: 0,
                     open: true,
-                    options: [
-                        { name: 'BLACK', selected: true },
-                        { name: 'WHITE', selected: true },
-                        { name: 'GREY', selected: true },
-                        { name: 'CREAM', selected: true },
-                    ]
+                    options: ALL_COLORS_FROM_VARIANTS.map(color => ({ name: color, selected: true }))
                 };
-                showToast('success', `New variant group "${optionName}" added!`);
+                showToast('success', `New variant group "${optionName}" added with all available colors!`);
                 return { ...prev, variants: [...prev.variants, newGroup] };
             } else {
                 // Otherwise, add a custom option to an existing group

@@ -229,3 +229,14 @@ export const initialVariantOptions: FinishGroup[] = [
         ]
     }
 ];
+
+// Collect all unique color options from initialVariantOptions for new custom groups
+export const ALL_COLORS_FROM_VARIANTS = (() => {
+    const uniqueColors = new Set<string>();
+    initialVariantOptions.forEach(group => {
+        group.options.forEach(option => {
+            uniqueColors.add(option.name);
+        });
+    });
+    return Array.from(uniqueColors).sort((a, b) => a.localeCompare(b));
+})();
