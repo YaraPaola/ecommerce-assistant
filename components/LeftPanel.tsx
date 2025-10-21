@@ -258,7 +258,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
                     onCompareAtPriceChange={(price) => onProductDataChange('compareAtPrice', price)}
                     finishGroups={productData.variants} 
                     onVariantChange={onVariantChange}
-                    onAddCustomOption={onAddCustomOption} // Pass the prop received from App.tsx
+                    onAddCustomOption={onAddCustomOption}
                     key={productData.variants.length} // Force re-render when variants change
                 />
             </Section>

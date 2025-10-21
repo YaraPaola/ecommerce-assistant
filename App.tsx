@@ -12,7 +12,7 @@ import { ImageSelectionModal } from './components/ImageSelectionModal';
 import { Toast } from './components/Toast';
 
 import { ProductData, SEOContent, ImageFile, VideoFile, ToastInfo, FinishGroup, FinishOption } from './types';
-import { BACKGROUND_PRESETS, initialVariantOptions, ALL_COLORS_FROM_VARIANTS } from './constants';
+import { BACKGROUND_PRESETS, initialVariantOptions } from './constants';
 
 import { generateSEOContent } from './services/geminiService';
 import { enhanceImage, createImageMontage } from './services/imageService';
@@ -102,27 +102,14 @@ function App() {
                     return prev;
                 }
 
-                // Collect all unique color options from initialVariantOptions
-                const allUniqueColors: FinishOption[] = [];
-                const seenColors = new Set<string>();
-
-                initialVariantOptions.forEach(group => {
-                    group.options.forEach(option => {
-                        if (!seenColors.has(option.name)) {
-                            allUniqueColors.push({ name: option.name, selected: true }); // All selected by default
-                            seenColors.add(option.name);
-                        }
-                    });
-                });
-
                 const newGroup: FinishGroup = {
                     id: newGroupId,
                     name: optionName,
                     priceModifier: 0,
                     open: true,
-                    options: ALL_COLORS_FROM_VARIANTS.map(colorName => ({ name: colorName, selected: true }))
+                    options: [] // Initialize with an empty array
                 };
-                showToast('success', `New variant group "${optionName}" added with all available colors!`);
+                showToast('success', `New variant group "${optionName}" added! You can now add custom colors to it.`);
                 return { ...prev, variants: [...prev.variants, newGroup] };
             } else {
                 // Otherwise, add a custom option to an existing group
@@ -533,13 +520,13 @@ function App() {
                                 onDownloadImages={handleDownloadImages}
                                 onGenerateMontage={handleGenerateMontage}
                                 onDownloadSelectedImages={handleDownloadImages} // Pass the existing handler
-                                onAddCustomOption={handleAddCustomOption} // Pass the new handler
+                                onAddCustomOption={handleAddCustomOption}
                             />
                         </div>
                     </div>
                     
                     {/* Right Sticky Column with Modern Card */}
-                    <div className="hidden lg:block lg:w-1/3 h-full">
+                    <div className="hidden lg:block lg:w-3/4 h-full">
                         <div className="sticky top-24">
                             <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft border border-white/20 p-6 hover-lift">
                                 <RightPanel content={seoContent} isLoading={isGeneratingSeo} />

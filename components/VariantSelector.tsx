@@ -157,34 +157,36 @@ export const VariantSelector: React.FC<VariantSelectorProps> = ({
                                                 </div>
                                             ))}
                                     </div>
-                                    {group.id === 'gloss' && ( // Only show custom add for 'Gloss' for now
-                                        <div className="mt-4 border-t border-gray-200 pt-4">
-                                            <label htmlFor="new-custom-color" className="block text-sm font-medium text-gray-700 mb-2">Add Custom Color (e.g., Blue + Grey)</label>
-                                            <div className="flex gap-2">
-                                                <input
-                                                    type="text"
-                                                    id="new-custom-color"
-                                                    value={newCustomOptionName}
-                                                    onChange={(e) => setNewCustomOptionName(e.target.value)}
-                                                    className="flex-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-primary-accent focus:border-primary-accent sm:text-sm p-2"
-                                                    placeholder="Enter new color combination"
-                                                />
-                                                <Button 
-                                                    onClick={() => {
-                                                        if (newCustomOptionName.trim()) {
-                                                            onAddCustomOption(group.name, newCustomOptionName.trim());
-                                                            setNewCustomOptionName('');
-                                                        }
-                                                    }}
-                                                    variant="secondary"
-                                                    size="sm"
-                                                    disabled={!newCustomOptionName.trim()}
-                                                >
-                                                    Add
-                                                </Button>
-                                            </div>
+                                    <div className="mt-4 border-t border-gray-200 pt-4">
+                                        <label htmlFor={`new-custom-color-${group.id}`} className="block text-sm font-medium text-gray-700 mb-2">Add Custom Color to "{group.name}"</label>
+                                        <div className="flex gap-2">
+                                            <input
+                                                type="text"
+                                                id={`new-custom-color-${group.id}`}
+                                                className="flex-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-primary-accent focus:border-primary-accent sm:text-sm p-2"
+                                                placeholder="Enter new color name"
+                                                onKeyDown={(e) => {
+                                                    if (e.key === 'Enter' && (e.target as HTMLInputElement).value.trim()) {
+                                                        onAddCustomOption(group.name, (e.target as HTMLInputElement).value.trim());
+                                                        (e.target as HTMLInputElement).value = '';
+                                                    }
+                                                }}
+                                            />
+                                            <Button 
+                                                onClick={(e) => {
+                                                    const input = (e.currentTarget.previousSibling as HTMLInputElement);
+                                                    if (input.value.trim()) {
+                                                        onAddCustomOption(group.name, input.value.trim());
+                                                        input.value = '';
+                                                    }
+                                                }}
+                                                variant="secondary"
+                                                size="sm"
+                                            >
+                                                Add
+                                            </Button>
                                         </div>
-                                    )}
+                                    </div>
                                 </div>
                             )}
                         </div>
