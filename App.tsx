@@ -533,6 +533,7 @@ function App() {
                                 onDownloadImages={handleDownloadImages}
                                 onGenerateMontage={handleGenerateMontage}
                                 onDownloadSelectedImages={handleDownloadImages} // Pass the existing handler
+                                onAddCustomOption={handleAddCustomOption} // Pass the new handler
                             />
                         </div>
                     </div>

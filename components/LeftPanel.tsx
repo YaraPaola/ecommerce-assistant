@@ -40,6 +40,7 @@ interface LeftPanelProps {
     onDownloadImages: () => void;
     onGenerateMontage: () => void;
     onDownloadSelectedImages: () => void;
+    onAddCustomOption: (groupName: string, optionName: string) => void;
 }
 
 export const LeftPanel: React.FC<LeftPanelProps> = ({
@@ -73,6 +74,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
     onDownloadImages,
     onGenerateMontage,
     onDownloadSelectedImages,
+    onAddCustomOption,
 }) => {
     const isAnyImageSelected = productData.images.some(img => img.selected);
     const isAnyVariantSelected = productData.variants.some(g => g.options.some(o => o.selected));
@@ -256,6 +258,8 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
                     onCompareAtPriceChange={(price) => onProductDataChange('compareAtPrice', price)}
                     finishGroups={productData.variants} 
                     onVariantChange={onVariantChange}
+                    onAddCustomOption={onAddCustomOption} // Pass the prop received from App.tsx
+                    key={productData.variants.length} // Force re-render when variants change
                 />
             </Section>
             
