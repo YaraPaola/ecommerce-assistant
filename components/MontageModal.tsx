@@ -35,7 +35,7 @@ export const MontageModal: React.FC<MontageModalProps> = ({ isOpen, onClose, onG
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl transform transition-all flex flex-col">
+            <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] transform transition-all flex flex-col">
                 <div className="flex items-center justify-between p-4 border-b">
                     <h3 className="text-lg font-medium leading-6 text-gray-900">Create Product Montage</h3>
                     <button onClick={onClose} className="p-1 rounded-full text-gray-400 hover:bg-gray-100">
