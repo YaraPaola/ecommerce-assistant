@@ -15,6 +15,7 @@ interface ImageUploaderProps {
     onGenerateMusicClick: () => void;
     isGeneratingMusic: boolean;
     onMontageClick: () => void;
+    onEditVideoClick: (video: ImageFile) => void;
 }
 
 const fileToBase64 = (file: File): Promise<string> => {
@@ -26,7 +27,7 @@ const fileToBase64 = (file: File): Promise<string> => {
     });
 };
 
-export const ImageUploader: React.FC<ImageUploaderProps> = ({ images, onImagesChange, onEnhanceClick, isEnhancing, onGenerateVideoClick, isGeneratingVideo, onGenerateMusicClick, isGeneratingMusic, onMontageClick }) => {
+export const ImageUploader: React.FC<ImageUploaderProps> = ({ images, onImagesChange, onEnhanceClick, isEnhancing, onGenerateVideoClick, isGeneratingVideo, onGenerateMusicClick, isGeneratingMusic, onMontageClick, onEditVideoClick }) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [openMenuId, setOpenMenuId] = React.useState<string | null>(null);
 
@@ -174,22 +175,34 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ images, onImagesCh
                                     onClick={() => setOpenMenuId(null)}
                                 />
                                 <div className="absolute top-12 right-2 z-40 bg-white rounded-lg shadow-xl border border-gray-200 py-1 min-w-[160px]">
-                                    <button
-                                        onClick={(e) => { e.stopPropagation(); setOpenMenuId(null); onEnhanceClick(image); }}
-                                        disabled={isEnhancing}
-                                        className="w-full px-4 py-2.5 text-left flex items-center gap-3 hover:bg-violet-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                                    >
-                                        <Icon name="sparkles" className="w-4 h-4 text-indigo-600" />
-                                        <span className="text-sm font-medium text-gray-700">Enhance Image</span>
-                                    </button>
-                                    <button
-                                        onClick={(e) => { e.stopPropagation(); setOpenMenuId(null); onGenerateVideoClick(image); }}
-                                        disabled={isGeneratingVideo}
-                                        className="w-full px-4 py-2.5 text-left flex items-center gap-3 hover:bg-purple-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                                    >
-                                        <Icon name="film" className="w-4 h-4 text-purple-600" />
-                                        <span className="text-sm font-medium text-gray-700">Create Video</span>
-                                    </button>
+                                    {image.mimeType.startsWith('video/') ? (
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); setOpenMenuId(null); onEditVideoClick(image); }}
+                                            className="w-full px-4 py-2.5 text-left flex items-center gap-3 hover:bg-blue-50 transition-colors"
+                                        >
+                                            <Icon name="scissors" className="w-4 h-4 text-blue-600" />
+                                            <span className="text-sm font-medium text-gray-700">Edit Video</span>
+                                        </button>
+                                    ) : (
+                                        <>
+                                            <button
+                                                onClick={(e) => { e.stopPropagation(); setOpenMenuId(null); onEnhanceClick(image); }}
+                                                disabled={isEnhancing}
+                                                className="w-full px-4 py-2.5 text-left flex items-center gap-3 hover:bg-violet-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                            >
+                                                <Icon name="sparkles" className="w-4 h-4 text-indigo-600" />
+                                                <span className="text-sm font-medium text-gray-700">Enhance Image</span>
+                                            </button>
+                                            <button
+                                                onClick={(e) => { e.stopPropagation(); setOpenMenuId(null); onGenerateVideoClick(image); }}
+                                                disabled={isGeneratingVideo}
+                                                className="w-full px-4 py-2.5 text-left flex items-center gap-3 hover:bg-purple-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                            >
+                                                <Icon name="film" className="w-4 h-4 text-purple-600" />
+                                                <span className="text-sm font-medium text-gray-700">Create Video</span>
+                                            </button>
+                                        </>
+                                    )}
                                     <button
                                         onClick={(e) => { e.stopPropagation(); setOpenMenuId(null); handleDownloadClick(e, image); }}
                                         className="w-full px-4 py-2.5 text-left flex items-center gap-3 hover:bg-green-50 transition-colors"

@@ -3,6 +3,7 @@ import { LeftPanel } from './components/LeftPanel';
 import { RightPanel } from './components/RightPanel';
 import { EnhanceImageModal } from './components/EnhanceImageModal';
 import { GenerateVideoModal } from './components/GenerateVideoModal';
+import { VideoEditorModal } from './components/VideoEditorModal';
 import { ImagePreviewModal } from './components/ImagePreviewModal';
 import { MontageModal } from './components/MontageModal';
 import { GenerateMusicModal } from './components/GenerateMusicModal';
@@ -68,6 +69,9 @@ function App() {
     const [isMontageModalOpen, setIsMontageModalOpen] = useState(false);
 
     const [isMusicModalOpen, setIsMusicModalOpen] = useState(false);
+
+    const [isVideoEditorOpen, setIsVideoEditorOpen] = useState(false);
+    const [videoToEdit, setVideoToEdit] = useState<ImageFile | null>(null);
 
     const [isImageSelectionOpen, setIsImageSelectionOpen] = useState(false);
     const [imageUrlsToSelect, setImageUrlsToSelect] = useState<string[]>([]);
@@ -250,6 +254,11 @@ function App() {
     const handleGenerateVideo = (image: ImageFile) => {
         setImageForVideo(image);
         setIsGenerateVideoModalOpen(true);
+    };
+
+    const handleEditVideo = (video: ImageFile) => {
+        setVideoToEdit(video);
+        setIsVideoEditorOpen(true);
     };
     
     const handleVideoGeneration = async (prompt: string, aspectRatio: string, resolution: string, videoLength: string) => {
@@ -450,6 +459,7 @@ function App() {
                                 onGenerateImage={handleGenerateImage}
                                 isGeneratingImage={isGeneratingImage || (!!generatedImagePreview && isGeneratingImage)}
                                 onGenerateVideo={handleGenerateVideo}
+                                onEditVideo={handleEditVideo}
                                 isGeneratingVideo={isGeneratingVideo}
                                 onGenerateMusic={handleGenerateMusic}
                                 isGeneratingMusic={isGeneratingMusic}
@@ -547,6 +557,14 @@ function App() {
                     isOpen={isMusicModalOpen}
                     onClose={() => setIsMusicModalOpen(false)}
                     onGenerate={handleMusicGeneration}
+                />
+            )}
+
+            {isVideoEditorOpen && videoToEdit && (
+                <VideoEditorModal
+                    isOpen={isVideoEditorOpen}
+                    onClose={() => setIsVideoEditorOpen(false)}
+                    video={videoToEdit}
                 />
             )}
 

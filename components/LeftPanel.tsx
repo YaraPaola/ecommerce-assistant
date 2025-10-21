@@ -23,6 +23,7 @@ interface LeftPanelProps {
     onGenerateImage: (image: ImageFile) => void;
     isGeneratingImage: boolean;
     onGenerateVideo: (image: ImageFile) => void;
+    onEditVideo: (video: ImageFile) => void;
     isGeneratingVideo: boolean;
     onGenerateMusic: () => void;
     isGeneratingMusic: boolean;
@@ -52,6 +53,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
     onGenerateImage,
     isGeneratingImage,
     onGenerateVideo,
+    onEditVideo,
     isGeneratingVideo,
     onGenerateMusic,
     isGeneratingMusic,
@@ -193,11 +195,12 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
                  <ImageUploader 
                     images={productData.images} 
                     onImagesChange={(images) => onProductDataChange('images', images)}
-                    onEnhanceClick={onGenerateImage}
-                    isEnhancing={isGeneratingImage}
-                    onGenerateVideoClick={onGenerateVideo}
-                    isGeneratingVideo={isGeneratingVideo}
-                    onGenerateMusicClick={onGenerateMusic}
+                        onEnhanceClick={onGenerateImage}
+                        isEnhancing={isGeneratingImage}
+                        onGenerateVideoClick={onGenerateVideo}
+                        onEditVideoClick={onEditVideo}
+                        isGeneratingVideo={isGeneratingVideo}
+                        onGenerateMusicClick={onGenerateMusic}
                     isGeneratingMusic={isGeneratingMusic}
                     onMontageClick={onGenerateMontage}
                 />
