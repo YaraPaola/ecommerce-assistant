@@ -40,7 +40,8 @@ export const VariantSelector: React.FC<VariantSelectorProps> = ({
     basePrice, onBasePriceChange, compareAtPrice, onCompareAtPriceChange,
     finishGroups, onVariantChange, onAddCustomOption
 }) => {
-    const [newCustomColor, setNewCustomColor] = React.useState('');
+    const [newCustomOptionName, setNewCustomOptionName] = React.useState(''); // For adding options to existing groups
+    const [newGroupName, setNewGroupName] = React.useState(''); // For adding new variant groups
 
     const toggleGroupOpen = (id: string) => {
         onVariantChange(finishGroups.map(g => g.id === id ? { ...g, open: !g.open } : g));
@@ -86,21 +87,21 @@ export const VariantSelector: React.FC<VariantSelectorProps> = ({
                     <input
                         type="text"
                         id="new-variant-group-name"
-                        value={newCustomColor} // Reusing state for simplicity, could be separate
-                        onChange={(e) => setNewCustomColor(e.target.value)}
+                        value={newGroupName}
+                        onChange={(e) => setNewGroupName(e.target.value)}
                         className="flex-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-primary-accent focus:border-primary-accent sm:text-sm p-2"
                         placeholder="Enter new group name"
                     />
                     <Button 
                         onClick={() => {
-                            if (newCustomColor.trim()) {
-                                onAddCustomOption('new_group', newCustomColor.trim()); // Use a special group name to signal new group creation
-                                setNewCustomColor('');
+                            if (newGroupName.trim()) {
+                                onAddCustomOption('new_group', newGroupName.trim()); // Use a special group name to signal new group creation
+                                setNewGroupName('');
                             }
                         }}
                         variant="secondary"
                         size="sm"
-                        disabled={!newCustomColor.trim()}
+                        disabled={!newGroupName.trim()}
                     >
                         Add Group
                     </Button>
@@ -148,21 +149,21 @@ export const VariantSelector: React.FC<VariantSelectorProps> = ({
                                                 <input
                                                     type="text"
                                                     id="new-custom-color"
-                                                    value={newCustomColor}
-                                                    onChange={(e) => setNewCustomColor(e.target.value)}
+                                                    value={newCustomOptionName}
+                                                    onChange={(e) => setNewCustomOptionName(e.target.value)}
                                                     className="flex-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-primary-accent focus:border-primary-accent sm:text-sm p-2"
                                                     placeholder="Enter new color combination"
                                                 />
                                                 <Button 
                                                     onClick={() => {
-                                                        if (newCustomColor.trim()) {
-                                                            onAddCustomOption(group.name, newCustomColor.trim());
-                                                            setNewCustomColor('');
+                                                        if (newCustomOptionName.trim()) {
+                                                            onAddCustomOption(group.name, newCustomOptionName.trim());
+                                                            setNewCustomOptionName('');
                                                         }
                                                     }}
                                                     variant="secondary"
                                                     size="sm"
-                                                    disabled={!newCustomColor.trim()}
+                                                    disabled={!newCustomOptionName.trim()}
                                                 >
                                                     Add
                                                 </Button>
