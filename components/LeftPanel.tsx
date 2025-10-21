@@ -16,6 +16,8 @@ interface LeftPanelProps {
     setTargetPlatform: (platform: string) => void;
     toneOfVoice: string;
     setToneOfVoice: (tone: string) => void;
+    contentLength: string;
+    setContentLength: (length: string) => void;
     onFetchUrl: () => void;
     isFetchingUrl: boolean;
     onFileImport: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -46,6 +48,8 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
     setTargetPlatform,
     toneOfVoice,
     setToneOfVoice,
+    contentLength,
+    setContentLength,
     onFetchUrl,
     isFetchingUrl,
     onFileImport,
@@ -113,6 +117,21 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
                                             : 'bg-[#ec4899] text-white hover:bg-[#db2777] shadow-md'
                                     }`}>
                                     {t.name}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                    <div>
+                        <label className="block text-sm font-semibold text-text-primary mb-3">Content Length</label>
+                        <div className="flex flex-wrap gap-3">
+                            {[{ id: 'short', name: 'Short' }, { id: 'medium', name: 'Medium' }, { id: 'long', name: 'Long' }].map(len => (
+                                <button key={len.id} onClick={() => setContentLength(len.id)}
+                                    className={`px-4 py-2 text-sm font-medium rounded-xl transition-all duration-300 hover-lift ${
+                                        contentLength === len.id 
+                                            ? 'bg-gradient-to-r from-[#8b5cf6] to-[#ec4899] text-white shadow-lg' 
+                                            : 'bg-[#6366f1] text-white hover:bg-[#4f46e5] shadow-md'
+                                    }`}>
+                                    {len.name}
                                 </button>
                             ))}
                         </div>

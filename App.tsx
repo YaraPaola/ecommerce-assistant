@@ -43,6 +43,7 @@ function App() {
     const [seoContent, setSeoContent] = useState<SEOContent | null>(null);
     const [targetPlatform, setTargetPlatform] = useState('shopify');
     const [toneOfVoice, setToneOfVoice] = useState('persuasive');
+    const [contentLength, setContentLength] = useState('medium'); // Default to medium
     const [toastInfo, setToastInfo] = useState<ToastInfo | null>(null);
 
     // Loading states
@@ -194,6 +195,7 @@ function App() {
                 image: primaryImage,
                 platform: targetPlatform,
                 tone: toneOfVoice,
+                contentLength: contentLength,
             });
             setSeoContent(content);
             showToast('success', 'SEO content generated successfully!');
@@ -452,6 +454,8 @@ function App() {
                                 setTargetPlatform={setTargetPlatform}
                                 toneOfVoice={toneOfVoice}
                                 setToneOfVoice={setToneOfVoice}
+                                contentLength={contentLength}
+                                setContentLength={setContentLength}
                                 onFetchUrl={handleFetchUrl}
                                 isFetchingUrl={isFetchingUrl || isImportingImages}
                                 onFileImport={handleFileImport}

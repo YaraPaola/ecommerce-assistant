@@ -28,11 +28,20 @@ const responseSchema = {
 
 
 export const generateSEOContent = async (
-    { description, image, platform, tone }:
-    { description: string; image?: ImageFile; platform: string; tone: string; }
+    { description, image, platform, tone, contentLength }:
+    { description: string; image?: ImageFile; platform: string; tone: string; contentLength: string; }
 ): Promise<SEOContent> => {
 
     let systemInstruction: string;
+    let lengthInstruction = '';
+
+    if (contentLength === 'short') {
+        lengthInstruction = 'Keep the description concise, around 100-150 words.';
+    } else if (contentLength === 'medium') {
+        lengthInstruction = 'Provide a detailed description, around 200-300 words.';
+    } else if (contentLength === 'long') {
+        lengthInstruction = 'Generate a comprehensive description, around 400-500 words.';
+    }
 
     if (platform === 'tiktok') {
         systemInstruction = `You are a viral TikTok marketing expert. Your tone should be ${tone}.
@@ -49,9 +58,9 @@ export const generateSEOContent = async (
         -   **CALL TO ACTION (1 line):** Tap the link in bio to shop! 🛍️
         -   **HASHTAGS (5-7 relevant tags):** #tiktokmademebuyit #[productcategory] #[niche] #viral
 
-        Generate content based on the product description provided by the user. The final 'description' field in the JSON output should be HTML that reflects this structure, using <p> for lines and <ul><li> for features.`;
+        Generate content based on the product description provided by the user. ${lengthInstruction} The final 'description' field in the JSON output should be HTML that reflects this structure, using <p> for lines and <ul><li> for features.`;
     } else if (platform === 'instagram') {
-        systemInstruction = `You are a savvy Instagram marketer. Your tone is ${tone}. Your task is to generate a compelling post.
+        systemInstruction = `You are a savvy Instagram marketer. Your tone is ${tone}. Your task is to generate a compelling post. ${lengthInstruction}
         
         The 'description' field in the JSON output should be HTML and must follow this structure:
         1.  **Catchy Hook:** Start with an engaging question or statement.
@@ -60,9 +69,11 @@ export const generateSEOContent = async (
         4.  **Call to Action:** Encourage users to click the link in your bio.
         5.  **Hashtags:** Provide relevant hashtags on new lines at the very end.
         
-        Generate content based on the product description provided by the user.`;
+        Generate content based on the product description provided by the user. ${lengthInstruction}`;
     } else { // Default for Shopify, Etsy, etc.
-        systemInstruction = `You are a world-class e-commerce copywriter specializing in ${platform} with a ${tone} tone.
+        systemInstruction = `You are a world-class e-commerce copywriter specializing in ${platform} with a ${tone} tone. ${lengthInstruction}
+
+Create ENERGETIC, conversion-optimized product descriptions with personality and structure.
 
 Create ENERGETIC, conversion-optimized product descriptions with personality and structure.
 
