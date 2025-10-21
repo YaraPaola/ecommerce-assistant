@@ -1,4 +1,4 @@
- import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { LeftPanel } from './components/LeftPanel';
 import { RightPanel } from './components/RightPanel';
 import { EnhanceImageModal } from './components/EnhanceImageModal';
@@ -89,6 +89,24 @@ function App() {
 
     const onVariantChange = (variants: FinishGroup[]) => {
         setProductData(prev => ({ ...prev, variants }));
+    };
+
+    const handleAddCustomOption = (groupName: string, optionName: string) => {
+        setProductData(prev => {
+            const updatedVariants = prev.variants.map(group => {
+                if (group.name === groupName) {
+                    // Check if option already exists to prevent duplicates
+                    if (!group.options.some(option => option.name === optionName)) {
+                        return {
+                            ...group,
+                            options: [...group.options, { name: optionName, selected: true }]
+                        };
+                    }
+                }
+                return group;
+            });
+            return { ...prev, variants: updatedVariants };
+        });
     };
 
     const handleFetchUrl = async () => {

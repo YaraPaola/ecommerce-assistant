@@ -2,6 +2,7 @@
 import React from 'react';
 import { FinishGroup } from '../types';
 import { Icon } from './Icon';
+import { Button } from './Button';
 
 interface VariantSelectorProps {
     basePrice: number;
@@ -10,6 +11,7 @@ interface VariantSelectorProps {
     onCompareAtPriceChange: (price: number | null) => void;
     finishGroups: FinishGroup[];
     onVariantChange: (groups: FinishGroup[]) => void;
+    onAddCustomOption: (groupName: string, optionName: string) => void;
 }
 
 const PriceInput: React.FC<{ label: string, value: number | null, onChange: (val: number | null) => void }> = ({ label, value, onChange }) => (
@@ -36,9 +38,10 @@ const PriceInput: React.FC<{ label: string, value: number | null, onChange: (val
 
 export const VariantSelector: React.FC<VariantSelectorProps> = ({
     basePrice, onBasePriceChange, compareAtPrice, onCompareAtPriceChange,
-    finishGroups, onVariantChange
+    finishGroups, onVariantChange, onAddCustomOption
 }) => {
-    
+    const [newCustomColor, setNewCustomColor] = React.useState('');
+
     const toggleGroupOpen = (id: string) => {
         onVariantChange(finishGroups.map(g => g.id === id ? { ...g, open: !g.open } : g));
     };
@@ -110,6 +113,34 @@ export const VariantSelector: React.FC<VariantSelectorProps> = ({
                                             </div>
                                         ))}
                                     </div>
+                                    {group.id === 'gloss' && ( // Only show custom add for 'Gloss' for now
+                                        <div className="mt-4 border-t border-gray-200 pt-4">
+                                            <label htmlFor="new-custom-color" className="block text-sm font-medium text-gray-700 mb-2">Add Custom Color (e.g., Blue + Grey)</label>
+                                            <div className="flex gap-2">
+                                                <input
+                                                    type="text"
+                                                    id="new-custom-color"
+                                                    value={newCustomColor}
+                                                    onChange={(e) => setNewCustomColor(e.target.value)}
+                                                    className="flex-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-primary-accent focus:border-primary-accent sm:text-sm p-2"
+                                                    placeholder="Enter new color combination"
+                                                />
+                                                <Button 
+                                                    onClick={() => {
+                                                        if (newCustomColor.trim()) {
+                                                            onAddCustomOption(group.name, newCustomColor.trim());
+                                                            setNewCustomColor('');
+                                                        }
+                                                    }}
+                                                    variant="secondary"
+                                                    size="sm"
+                                                    disabled={!newCustomColor.trim()}
+                                                >
+                                                    Add
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </div>
