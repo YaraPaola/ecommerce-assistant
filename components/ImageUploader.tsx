@@ -16,6 +16,7 @@ interface ImageUploaderProps {
     isGeneratingMusic: boolean;
     onMontageClick: () => void;
     onEditVideoClick: (video: ImageFile) => void;
+    onDownloadSelectedImages: () => void;
 }
 
 const fileToBase64 = (file: File): Promise<string> => {
@@ -27,7 +28,7 @@ const fileToBase64 = (file: File): Promise<string> => {
     });
 };
 
-export const ImageUploader: React.FC<ImageUploaderProps> = ({ images, onImagesChange, onEnhanceClick, isEnhancing, onGenerateVideoClick, isGeneratingVideo, onGenerateMusicClick, isGeneratingMusic, onMontageClick, onEditVideoClick }) => {
+export const ImageUploader: React.FC<ImageUploaderProps> = ({ images, onImagesChange, onEnhanceClick, isEnhancing, onGenerateVideoClick, isGeneratingVideo, onGenerateMusicClick, isGeneratingMusic, onMontageClick, onEditVideoClick, onDownloadSelectedImages }) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [openMenuId, setOpenMenuId] = React.useState<string | null>(null);
 
@@ -103,6 +104,17 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ images, onImagesCh
                         >
                             {allSelected ? 'Deselect All' : `Select All (${images.length})`}
                         </button>
+                    )}
+                    {selectedImagesCount > 0 && (
+                        <Button 
+                            onClick={onDownloadSelectedImages}
+                            variant="secondary"
+                            className="px-3 py-1.5 text-xs"
+                            title="Download selected images"
+                        >
+                            <Icon name="download" className="mr-1.5 h-4 w-4" />
+                            Download Selected ({selectedImagesCount})
+                        </Button>
                     )}
                 </div>
                  <div className="flex items-center gap-2">

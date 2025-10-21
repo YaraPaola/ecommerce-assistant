@@ -477,6 +477,7 @@ function App() {
                                 isPublishing={isPublishing}
                                 onDownloadImages={handleDownloadImages}
                                 onGenerateMontage={handleGenerateMontage}
+                                onDownloadSelectedImages={handleDownloadImages} // Pass the existing handler
                             />
                         </div>
                     </div>

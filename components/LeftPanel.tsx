@@ -39,6 +39,7 @@ interface LeftPanelProps {
     isPublishing: boolean;
     onDownloadImages: () => void;
     onGenerateMontage: () => void;
+    onDownloadSelectedImages: () => void;
 }
 
 export const LeftPanel: React.FC<LeftPanelProps> = ({
@@ -71,6 +72,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
     isPublishing,
     onDownloadImages,
     onGenerateMontage,
+    onDownloadSelectedImages,
 }) => {
     const isAnyImageSelected = productData.images.some(img => img.selected);
     const isAnyVariantSelected = productData.variants.some(g => g.options.some(o => o.selected));
@@ -220,8 +222,9 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
                         onEditVideoClick={onEditVideo}
                         isGeneratingVideo={isGeneratingVideo}
                         onGenerateMusicClick={onGenerateMusic}
-                    isGeneratingMusic={isGeneratingMusic}
+                        isGeneratingMusic={isGeneratingMusic}
                     onMontageClick={onGenerateMontage}
+                    onDownloadSelectedImages={onDownloadSelectedImages}
                 />
                  {productData.videos.length > 0 && (
                     <VideoGallery

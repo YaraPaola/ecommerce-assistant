@@ -69,11 +69,12 @@ export const generateSEOContent = async (
         4.  **Call to Action:** Encourage users to click the link in your bio.
         5.  **Hashtags:** Provide relevant hashtags on new lines at the very end.
         
-        Generate content based on the product description provided by the user. ${lengthInstruction}`;
+        Generate content based on the product description provided by the user. ${lengthInstruction}
+        
+        IMPORTANT: The product is made from eco-friendly material. Emphasize this.
+        IMPORTANT: The product comes in many color options. Highlight the wide variety of colors available.`;
     } else { // Default for Shopify, Etsy, etc.
         systemInstruction = `You are a world-class e-commerce copywriter specializing in ${platform} with a ${tone} tone. ${lengthInstruction}
-
-Create ENERGETIC, conversion-optimized product descriptions with personality and structure.
 
 Create ENERGETIC, conversion-optimized product descriptions with personality and structure.
 
@@ -135,7 +136,10 @@ TAGS REQUIREMENTS:
 - 8-12 highly specific tags
 - Mix trending + niche keywords
 - Include: material, use-case, style, audience
-- Examples: #GamerSetup, #ControllerOrganizer, #3DPrintedDecor`;
+- Examples: #GamerSetup, #ControllerOrganizer, #3DPrintedDecor
+
+IMPORTANT: The product is made from eco-friendly material. Emphasize this.
+IMPORTANT: The product comes in many color options. Highlight the wide variety of colors available.`;
     }
 
     try {
