@@ -617,13 +617,14 @@ function App() {
                     isOpen={isVideoEditorOpen}
                     onClose={() => setIsVideoEditorOpen(false)}
                     video={videoToEdit}
-                    onSave={(editedVideo) => {
-                        // In a real application, this would be a new video file from a service
-                        // For now, we'll just replace the old video with the (unmodified) one
-                        // passed back from the modal.
+                    onSave={(trimmedVideoBlob, originalVideoId) => {
+                        // Create a new URL for the trimmed video blob
+                        const newVideoUrl = URL.createObjectURL(trimmedVideoBlob);
+
                         onProductDataChange('videos', productData.videos.map(vid => 
-                            vid.id === editedVideo.id ? { ...vid, url: editedVideo.base64 } : vid
+                            vid.id === originalVideoId ? { ...vid, url: newVideoUrl, name: `trimmed_${vid.name}` } : vid
                         ));
+                        showToast('success', 'Video trimming simulated! Check console for details.');
                         setIsVideoEditorOpen(false);
                     }}
                 />

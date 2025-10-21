@@ -6,15 +6,17 @@ import { Button } from './Button';
 interface VideoEditorModalProps {
     isOpen: boolean;
     onClose: () => void;
-    video: ImageFile;
-    onSave: (editedVideo: ImageFile) => void;
+    video: ImageFile; // Still using ImageFile for consistency, but base64 will be a blob URL
+    onSave: (trimmedVideoBlob: Blob, originalVideoId: string) => void;
 }
 
 export const VideoEditorModal: React.FC<VideoEditorModalProps> = ({ isOpen, onClose, video, onSave }) => {
     const videoRef = React.useRef<HTMLVideoElement>(null);
+    const canvasRef = React.useRef<HTMLCanvasElement>(null);
     const [startTime, setStartTime] = React.useState(0);
     const [endTime, setEndTime] = React.useState(0);
     const [duration, setDuration] = React.useState(0);
+    const [isProcessing, setIsProcessing] = React.useState(false);
 
     React.useEffect(() => {
         if (videoRef.current) {
@@ -27,13 +29,18 @@ export const VideoEditorModal: React.FC<VideoEditorModalProps> = ({ isOpen, onCl
 
     if (!isOpen) return null;
 
-    const handleSave = () => {
-        // In a real application, you would send startTime and endTime to a video processing service
-        // For now, we'll just log them and close the modal.
-        console.log(`Trimming video from ${startTime}s to ${endTime}s`);
-        // You would typically get a new video file back from the service
-        // For demonstration, we'll just pass the original video back.
-        onSave(video); 
+    const handleSave = async () => {
+        setIsProcessing(true);
+        console.log(`Attempting to trim video from ${startTime}s to ${endTime}s`);
+
+        // Placeholder for actual video trimming logic
+        // In a real scenario, this would involve complex client-side (e.g., WebAssembly FFmpeg)
+        // or server-side processing to re-encode the video segment.
+        // For now, we'll simulate a trimmed video by creating a dummy blob.
+        const dummyBlob = new Blob(['trimmed video data placeholder'], { type: video.mimeType });
+        
+        onSave(dummyBlob, video.id); 
+        setIsProcessing(false);
         onClose();
     };
 
@@ -54,6 +61,8 @@ export const VideoEditorModal: React.FC<VideoEditorModalProps> = ({ isOpen, onCl
                             className="max-h-full max-w-full object-contain rounded-md"
                             controls
                         />
+                        {/* Canvas for future frame manipulation/trimming visualization */}
+                        <canvas ref={canvasRef} style={{ display: 'none' }} />
                     </div>
                     <div className="space-y-4">
                         <h4 className="text-base font-semibold text-gray-800">Video Editing Tools</h4>
@@ -89,11 +98,12 @@ export const VideoEditorModal: React.FC<VideoEditorModalProps> = ({ isOpen, onCl
                     </div>
                 </div>
                 <div className="px-6 py-4 bg-gray-50 flex justify-end border-t">
-                    <Button onClick={onClose} variant="secondary" className="mr-2">
+                    <Button onClick={onClose} variant="secondary" className="mr-2" disabled={isProcessing}>
                         Cancel
                     </Button>
-                    <Button onClick={handleSave} variant="primary">
-                        Save Changes
+                    <Button onClick={handleSave} variant="primary" disabled={isProcessing}>
+                        {isProcessing ? <Icon name="spinner" className="animate-spin mr-2" /> : null}
+                        {isProcessing ? 'Processing...' : 'Save Changes'}
                     </Button>
                 </div>
             </div>
