@@ -149,7 +149,7 @@ function App() {
             if (dimensions) enhancedDescription += `\n\nDimensions: ${dimensions}`;
             if (material) enhancedDescription += `\n\nMaterial: ${material}`;
             if (weight) enhancedDescription += `\n\nWeight: ${weight}`;
-            if (specifications) {
+            if (specifications && Object.keys(specifications).length > 0) {
                 enhancedDescription += `\n\nAdditional Specifications:`;
                 Object.entries(specifications).forEach(([key, value]) => {
                     enhancedDescription += `\n- ${key}: ${value}`;

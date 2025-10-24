@@ -112,12 +112,7 @@ export const extractProductFromHtml = async (htmlContent: string): Promise<{
             },
             dimensions: { type: Type.STRING, description: "Product dimensions (e.g., '6\" L x 4.5\" W x 1\" D')." },
             material: { type: Type.STRING, description: "Primary material of the product." },
-            weight: { type: Type.STRING, description: "Product weight." },
-            specifications: {
-                type: Type.OBJECT,
-                description: "Additional product specifications as key-value pairs.",
-                additionalProperties: { type: Type.STRING }
-            }
+            weight: { type: Type.STRING, description: "Product weight." }
         },
         required: ["title", "description", "price", "imageUrls"]
     };
