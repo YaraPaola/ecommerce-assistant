@@ -141,12 +141,24 @@ function App() {
         setIsFetchingUrl(true);
         showToast('info', 'Fetching product data from URL...');
         try {
-            const { title, description, price, imageUrls } = await fetchProductFromURL(productData.importUrl);
-            console.log('Fetched product data:', { title, description, price, imageUrlsCount: imageUrls?.length, imageUrls });
-            
+            const { title, description, price, imageUrls, dimensions, material, weight, specifications } = await fetchProductFromURL(productData.importUrl);
+            console.log('Fetched product data:', { title, description, price, imageUrlsCount: imageUrls?.length, imageUrls, dimensions, material, weight, specifications });
+
+            // Enhance the description with additional product information
+            let enhancedDescription = `${title}\n\n${description}`;
+            if (dimensions) enhancedDescription += `\n\nDimensions: ${dimensions}`;
+            if (material) enhancedDescription += `\n\nMaterial: ${material}`;
+            if (weight) enhancedDescription += `\n\nWeight: ${weight}`;
+            if (specifications) {
+                enhancedDescription += `\n\nAdditional Specifications:`;
+                Object.entries(specifications).forEach(([key, value]) => {
+                    enhancedDescription += `\n- ${key}: ${value}`;
+                });
+            }
+
             setProductData(prev => ({
                 ...prev,
-                description: `${title}\n\n${description}`,
+                description: enhancedDescription,
                 basePrice: price > 0 ? price : prev.basePrice,
             }));
             
@@ -172,10 +184,23 @@ function App() {
         showToast('info', 'Importing from HTML file...');
         try {
             const htmlContent = await file.text();
-            const { title, description, price, imageUrls } = await extractProductFromHtml(htmlContent);
+            const { title, description, price, imageUrls, dimensions, material, weight, specifications } = await extractProductFromHtml(htmlContent);
+
+            // Enhance the description with additional product information
+            let enhancedDescription = `${title}\n\n${description}`;
+            if (dimensions) enhancedDescription += `\n\nDimensions: ${dimensions}`;
+            if (material) enhancedDescription += `\n\nMaterial: ${material}`;
+            if (weight) enhancedDescription += `\n\nWeight: ${weight}`;
+            if (specifications) {
+                enhancedDescription += `\n\nAdditional Specifications:`;
+                Object.entries(specifications).forEach(([key, value]) => {
+                    enhancedDescription += `\n- ${key}: ${value}`;
+                });
+            }
+
             setProductData(prev => ({
                 ...prev,
-                description: `${title}\n\n${description}`,
+                description: enhancedDescription,
                 basePrice: price > 0 ? price : prev.basePrice,
             }));
             showToast('success', 'Successfully parsed product info. Please select images to import.');
