@@ -53,13 +53,11 @@ export const enhanceImage = async (image: ImageFile, prompt: string, size: strin
                         },
                     },
                     {
-                        text: `Your primary goal is to generate an image with an exact aspect ratio of ${size}.
-
-Within that ${size} frame, your second task is to replace the background of the provided product image based on the following prompt.
+                        text: `Your primary goal is to replace the background of the provided product image based on the following prompt.
 
 CRITICAL RULES:
-1.  **Aspect Ratio:** The final output image's aspect ratio MUST BE exactly ${size}. This is the most important instruction. Do not deviate. Add background padding if necessary to meet this ratio.
-2.  **Product Integrity:** Do NOT change the product in the image. Its appearance, shape, lighting, and texture must remain completely unaltered. ONLY change the background. Do NOT stretch, crop, or distort the original product to make it fit the new aspect ratio.
+1.  **Product Integrity:** This is the most important instruction. Do NOT change the product in the image. Its appearance, shape, lighting, and texture must remain completely unaltered. ONLY change the background.
+2.  **Aspect Ratio:** The final output image's aspect ratio should be ${size}. If preserving the product's original shape conflicts with this aspect ratio, prioritize preserving the product's shape and use background padding to meet the aspect ratio.
 
 Background Prompt: "${prompt}"`,
                     },
