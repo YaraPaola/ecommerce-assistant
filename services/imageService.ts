@@ -58,6 +58,7 @@ export const enhanceImage = async (image: ImageFile, prompt: string, size: strin
 CRITICAL RULES:
 1.  **Product Integrity:** This is the most important instruction. Do NOT change the product in the image. Its appearance, shape, lighting, and texture must remain completely unaltered. ONLY change the background.
 2.  **Aspect Ratio:** The final output image's aspect ratio should be ${size}. If preserving the product's original shape conflicts with this aspect ratio, prioritize preserving the product's shape and use background padding to meet the aspect ratio.
+3.  **No Distortion:** Under no circumstances should the product be stretched, cropped, or distorted in any way.
 
 Background Prompt: "${prompt}"`,
                     },

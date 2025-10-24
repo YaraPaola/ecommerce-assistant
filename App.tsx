@@ -526,7 +526,7 @@ function App() {
                     </div>
                     
                     {/* Right Sticky Column with Modern Card */}
-                    <div className="hidden lg:block lg:w-3/4 h-full">
+                    <div className="hidden lg:block lg:w-1/3 h-full">
                         <div className="sticky top-24">
                             <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft border border-white/20 p-6 hover-lift">
                                 <RightPanel content={seoContent} isLoading={isGeneratingSeo} />
