@@ -17,6 +17,8 @@ interface EnhanceImageModalProps {
     backgroundPresets: BackgroundPreset[];
     image: ImageFile;
     showToast: (type: ToastInfo['type'], message: string) => void;
+    onObjectRemovalRequest?: (image: ImageFile) => void;
+    isRemovingObject?: boolean;
 }
 
 const SIZES = [
@@ -25,7 +27,7 @@ const SIZES = [
     { id: '16:9', name: 'Landscape (16:9)' },
 ];
 
-export const EnhanceImageModal: React.FC<EnhanceImageModalProps> = ({ isOpen, onClose, onGenerate, backgroundPresets, image, showToast }) => {
+export const EnhanceImageModal: React.FC<EnhanceImageModalProps> = ({ isOpen, onClose, onGenerate, backgroundPresets, image, showToast, onObjectRemovalRequest, isRemovingObject }) => {
     const [customPrompt, setCustomPrompt] = useState(backgroundPresets[0].prompt);
     const [selectedSize, setSelectedSize] = useState(SIZES[0].id);
     const [editedImageFile, setEditedImageFile] = useState<ImageFile>(image);
@@ -45,7 +47,7 @@ export const EnhanceImageModal: React.FC<EnhanceImageModalProps> = ({ isOpen, on
             onGenerate(editedImageData, customPrompt, selectedSize);
         }
     };
-    
+
     const handleColorChangeRequest = async (color: string) => {
         if (!color.trim()) {
             showToast('error', 'Please enter a color.');
@@ -81,6 +83,8 @@ export const EnhanceImageModal: React.FC<EnhanceImageModalProps> = ({ isOpen, on
                             image={editedImageFile}
                             onColorChangeRequest={handleColorChangeRequest}
                             isChangingColor={isChangingColor}
+                            onObjectRemovalRequest={onObjectRemovalRequest}
+                            isRemovingObject={isRemovingObject}
                         />
                     </div>
 

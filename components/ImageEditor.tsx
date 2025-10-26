@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState, useImperativeHandle, forwardRef, us
 import { ImageFile } from '../types';
 import { Icon } from './Icon';
 import { Button } from './Button';
+import { removeObjectFromImage } from '../services/imageService';
 
 export interface ImageEditorHandle {
     getEditedImageData: () => { base64: string; mimeType: string; } | null;
@@ -11,6 +12,8 @@ interface ImageEditorProps {
     image: ImageFile;
     onColorChangeRequest: (color: string) => void;
     isChangingColor: boolean;
+    onObjectRemovalRequest?: (image: ImageFile) => void;
+    isRemovingObject?: boolean;
 }
 
 type FocusType = 'radial' | 'linear' | null;
@@ -77,7 +80,7 @@ const SliderControl: React.FC<{ label: string, value: number, min?: number, max?
     </div>
 );
 
-export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(({ image, onColorChangeRequest, isChangingColor }, ref) => {
+export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(({ image, onColorChangeRequest, isChangingColor, onObjectRemovalRequest, isRemovingObject }, ref) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const imageRef = useRef<HTMLImageElement>(new Image());
@@ -763,15 +766,38 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(({ im
                             <SliderControl label="Brush Size" min={5} max={100} unit="px" value={eraserSize} onChange={e => setEraserSize(Number(e.target.value))} />
                             {eraserPath.length > 0 && (
                                 <div className="flex gap-2">
-                                    <Button onClick={() => {/* Apply AI removal */}} variant="primary" className="flex-1">
-                                        <Icon name="sparkles" className="mr-1" /> Remove Selected
+                                    <Button
+                                        onClick={async () => {
+                                            if (onObjectRemovalRequest && eraserPath.length > 0) {
+                                                try {
+                                                    const cleanedImage = await removeObjectFromImage(image, eraserPath);
+                                                    onObjectRemovalRequest(cleanedImage);
+                                                    setEraserPath([]);
+                                                    setIsEraserMode(false);
+                                                } catch (error) {
+                                                    console.error('Object removal failed:', error);
+                                                }
+                                            }
+                                        }}
+                                        disabled={isRemovingObject}
+                                        variant="primary"
+                                        className="flex-1"
+                                    >
+                                        {isRemovingObject ? (
+                                            <>
+                                                <Icon name="spinner" className="animate-spin mr-1" /> Removing...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Icon name="sparkles" className="mr-1" /> Remove Selected
+                                            </>
+                                        )}
                                     </Button>
                                     <Button onClick={() => setEraserPath([])} variant="secondary" className="flex-1">
                                         Clear Selection
                                     </Button>
                                 </div>
                             )}
-                            <p className="text-xs text-orange-600">⚠️ Coming soon: AI-powered smart removal</p>
                         </div>
                     )}
                 </div>

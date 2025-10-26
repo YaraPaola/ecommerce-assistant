@@ -77,6 +77,9 @@ function App() {
     const [isImageSelectionOpen, setIsImageSelectionOpen] = useState(false);
     const [imageUrlsToSelect, setImageUrlsToSelect] = useState<string[]>([]);
 
+    // Object removal state
+    const [isRemovingObject, setIsRemovingObject] = useState(false);
+
 
     // Callbacks and handlers
     const showToast = useCallback((type: ToastInfo['type'], message: string, link?: string) => {
@@ -284,7 +287,7 @@ function App() {
         setIsEnhanceModalOpen(false);
         showToast('info', 'Generating enhanced image...');
         setEnhanceImageArgs({ customPrompt, size });
-        
+
         try {
             const sourceImage = { ...imageToEdit, ...editedImage }; // combine original data with edited data
             const newImage = await enhanceImage(sourceImage, customPrompt, size);
@@ -295,6 +298,21 @@ function App() {
             setEnhanceImageArgs(null);
         } finally {
             setIsGeneratingImage(false);
+        }
+    };
+
+    const handleObjectRemovalRequest = async (cleanedImage: ImageFile) => {
+        setIsRemovingObject(true);
+        showToast('info', 'Processing object removal...');
+
+        try {
+            // The cleaned image is already processed, just add it to the product data
+            onProductDataChange('images', [...productData.images, cleanedImage]);
+            showToast('success', 'Object removed successfully!');
+        } catch (error) {
+            showToast('error', error instanceof Error ? error.message : 'Failed to process object removal.');
+        } finally {
+            setIsRemovingObject(false);
         }
     };
 
@@ -569,6 +587,8 @@ function App() {
                     backgroundPresets={BACKGROUND_PRESETS}
                     image={imageToEdit}
                     showToast={showToast}
+                    onObjectRemovalRequest={handleObjectRemovalRequest}
+                    isRemovingObject={isRemovingObject}
                 />
             )}
 
