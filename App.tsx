@@ -306,9 +306,15 @@ function App() {
         showToast('info', 'Processing object removal...');
 
         try {
-            // The cleaned image is already processed, just add it to the product data
-            onProductDataChange('images', [...productData.images, cleanedImage]);
-            showToast('success', 'Object removed successfully!');
+            // Replace the current image being edited with the cleaned version
+            if (imageToEdit) {
+                const updatedImages = productData.images.map(img =>
+                    img.id === imageToEdit.id ? cleanedImage : img
+                );
+                onProductDataChange('images', updatedImages);
+                setImageToEdit(cleanedImage); // Update the editor to show the cleaned image
+                showToast('success', 'Object removed successfully!');
+            }
         } catch (error) {
             showToast('error', error instanceof Error ? error.message : 'Failed to process object removal.');
         } finally {

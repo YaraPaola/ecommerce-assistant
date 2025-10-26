@@ -776,6 +776,10 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(({ im
                                                     setIsEraserMode(false);
                                                 } catch (error) {
                                                     console.error('Object removal failed:', error);
+                                                    // Show error in toast if showToast is available
+                                                    if (typeof window !== 'undefined' && (window as any).showToast) {
+                                                        (window as any).showToast('error', 'Failed to remove object. Please try again.');
+                                                    }
                                                 }
                                             }
                                         }}
