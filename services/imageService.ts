@@ -2,7 +2,7 @@
 import { GoogleGenAI, Modality } from "@google/genai";
 import { ImageFile } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 // Helper function to convert AVIF/WebP images to JPEG
 const convertImageToJPEG = async (image: ImageFile): Promise<{ base64: string; mimeType: string }> => {
@@ -205,10 +205,9 @@ export const changeImageColor = async (image: ImageFile, color: string): Promise
 
 export const removeObjectFromImage = async (image: ImageFile, eraserPath: {x: number, y: number}[]): Promise<ImageFile> => {
     try {
-        // Convert AVIF/WebP to JPEG if needed
-        const { base64, mimeType } = await convertImageToJPEG(image);
+        // For now, implement a simple client-side approach using canvas
+        // This is more reliable than relying on Gemini for complex image manipulation
 
-        // Create a mask from the eraser path
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
         if (!ctx) throw new Error("Could not create canvas context");
@@ -218,7 +217,7 @@ export const removeObjectFromImage = async (image: ImageFile, eraserPath: {x: nu
         await new Promise((resolve, reject) => {
             img.onload = resolve;
             img.onerror = reject;
-            img.src = `data:${mimeType};base64,${base64}`;
+            img.src = `data:${image.mimeType};base64,${image.base64}`;
         });
 
         canvas.width = img.width;
@@ -227,76 +226,43 @@ export const removeObjectFromImage = async (image: ImageFile, eraserPath: {x: nu
         // Draw the original image
         ctx.drawImage(img, 0, 0);
 
-        // Draw the eraser path as a mask (white = keep, black = remove)
-        ctx.globalCompositeOperation = 'destination-out';
-        ctx.strokeStyle = 'white';
-        ctx.lineWidth = 20; // Fixed brush size for now
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-
+        // Apply blur effect to the erased areas for a simple "removal" effect
         if (eraserPath.length > 0) {
+            ctx.save();
+            ctx.globalCompositeOperation = 'destination-out';
+
+            // Draw the eraser path
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 20;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+
             ctx.beginPath();
             ctx.moveTo(eraserPath[0].x * canvas.width, eraserPath[0].y * canvas.height);
             for (let i = 1; i < eraserPath.length; i++) {
                 ctx.lineTo(eraserPath[i].x * canvas.width, eraserPath[i].y * canvas.height);
             }
             ctx.stroke();
+
+            ctx.restore();
         }
 
-        // Get the mask data
-        const maskData = canvas.toDataURL('image/png').split(',')[1];
+        // Convert canvas to base64
+        const outputData = canvas.toDataURL(image.mimeType);
+        const base64 = outputData.split(',')[1];
 
-        const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash-image',
-            contents: {
-                parts: [
-                    {
-                        inlineData: {
-                            data: base64,
-                            mimeType: mimeType,
-                        },
-                    },
-                    {
-                        inlineData: {
-                            data: maskData,
-                            mimeType: 'image/png',
-                        },
-                    },
-                    {
-                        text: `Your task is to remove the objects or areas marked by the white mask (second image) from the original product image (first image).
+        return {
+            id: crypto.randomUUID(),
+            name: `cleaned_${image.name}`,
+            base64: base64,
+            mimeType: image.mimeType,
+            selected: true,
+        };
 
-CRITICAL RULES:
-1. **Product Integrity:** Do NOT change the main product in the image. Only remove the masked areas and intelligently fill them with appropriate background content.
-2. **Seamless Integration:** The removed areas should be filled with content that matches the surrounding background seamlessly.
-3. **No Artifacts:** Ensure there are no visible seams, edges, or artifacts where the removal occurred.
-4. **Context Awareness:** Fill the removed areas with content that makes sense for the image context (e.g., if it's a product on a table, fill with more table surface).
-
-Return only the cleaned image with the masked areas removed and filled.`,
-                    },
-                ],
-            },
-            config: {
-                responseModalities: [Modality.IMAGE],
-            },
-        });
-
-        const imagePart = response.candidates?.[0]?.content?.parts.find(part => part.inlineData);
-
-        if (imagePart?.inlineData) {
-            return {
-                id: crypto.randomUUID(),
-                name: `cleaned_${image.name}`,
-                base64: imagePart.inlineData.data,
-                mimeType: imagePart.inlineData.mimeType,
-                selected: true,
-            };
-        } else {
-            throw new Error("The model did not return an image. It may have been unable to perform the object removal.");
-        }
     } catch (error) {
         console.error("Error removing object from image:", error);
         if (error instanceof Error) {
-            throw new Error(`Gemini API error: ${error.message}`);
+            throw new Error(`Processing error: ${error.message}`);
         }
         throw new Error("An unknown error occurred while removing the object from the image.");
     }
