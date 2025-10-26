@@ -80,6 +80,64 @@ const SliderControl: React.FC<{ label: string, value: number, min?: number, max?
     </div>
 );
 
+const applyFilters = (
+    ctx: CanvasRenderingContext2D,
+    width: number,
+    height: number,
+    filters: { brightness: number; contrast: number; saturate: number; sepia: number }
+) => {
+    const { brightness, contrast, saturate, sepia } = filters;
+    if (brightness === 100 && contrast === 100 && saturate === 100 && sepia === 0) {
+        return; // No filters to apply
+    }
+
+    const imageData = ctx.getImageData(0, 0, width, height);
+    const data = imageData.data;
+    const brightnessFactor = brightness / 100;
+    const contrastFactor = (contrast / 100 - 1) * 128;
+    const saturateFactor = saturate / 100;
+    const sepiaFactor = sepia / 100;
+
+    for (let i = 0; i < data.length; i += 4) {
+        let r = data[i];
+        let g = data[i + 1];
+        let b = data[i + 2];
+
+        // Brightness
+        r *= brightnessFactor;
+        g *= brightnessFactor;
+        b *= brightnessFactor;
+
+        // Contrast
+        r += contrastFactor;
+        g += contrastFactor;
+        b += contrastFactor;
+
+        // Saturation
+        const gray = 0.299 * r + 0.587 * g + 0.114 * b;
+        r = gray * (1 - saturateFactor) + r * saturateFactor;
+        g = gray * (1 - saturateFactor) + g * saturateFactor;
+        b = gray * (1 - saturateFactor) + b * saturateFactor;
+
+        // Sepia
+        if (sepiaFactor > 0) {
+            const sr = r * 0.393 + g * 0.769 + b * 0.189;
+            const sg = r * 0.349 + g * 0.686 + b * 0.168;
+            const sb = r * 0.272 + g * 0.534 + b * 0.131;
+            r = r * (1 - sepiaFactor) + sr * sepiaFactor;
+            g = g * (1 - sepiaFactor) + sg * sepiaFactor;
+            b = b * (1 - sepiaFactor) + sb * sepiaFactor;
+        }
+
+        // Clamp values
+        data[i] = Math.max(0, Math.min(255, r));
+        data[i + 1] = Math.max(0, Math.min(255, g));
+        data[i + 2] = Math.max(0, Math.min(255, b));
+    }
+    ctx.putImageData(imageData, 0, 0);
+};
+
+
 export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(({ image, onColorChangeRequest, isChangingColor, onObjectRemovalRequest, isRemovingObject }, ref) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -184,8 +242,8 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(({ im
             targetCtx.restore();
         };
         
-        ctx.filter = `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturate}%) sepia(${sepia}%)`;
         drawImageWithTransforms(ctx, img);
+        applyFilters(ctx, canvas.width, canvas.height, { brightness, contrast, saturate, sepia });
 
         if (focusArea && (blur > 0 || pixelate > 0)) {
             const offscreenCtx = offscreenCanvasRef.current.getContext('2d');
@@ -193,7 +251,7 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(({ im
             offscreenCanvasRef.current.width = canvas.width;
             offscreenCanvasRef.current.height = canvas.height;
             
-            offscreenCtx.filter = `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturate}%) sepia(${sepia}%) blur(${blur}px)`;
+            offscreenCtx.filter = `blur(${blur}px)`;
             if (pixelate > 0) {
                 const tempPixelCanvas = document.createElement('canvas');
                 const tempPixelCtx = tempPixelCanvas.getContext('2d');
@@ -209,6 +267,7 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(({ im
                 }
             } else {
                 drawImageWithTransforms(offscreenCtx, img);
+                applyFilters(offscreenCtx, canvas.width, canvas.height, { brightness, contrast, saturate, sepia });
             }
         
             const maskCanvas = document.createElement('canvas');
@@ -519,8 +578,8 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(({ im
                 finalCtx.restore();
             }
 
-            finalCtx.filter = `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturate}%) sepia(${sepia}%)`;
             tempDraw(img, finalCanvas.width, finalCanvas.height);
+            applyFilters(finalCtx, finalCanvas.width, finalCanvas.height, { brightness, contrast, saturate, sepia });
 
             if (focusArea && (blur > 0 || pixelate > 0)) {
                 const mainCanvas = canvasRef.current;
@@ -533,15 +592,16 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(({ im
                     const tempCtx = tempCanvas.getContext('2d');
                     if (tempCtx) {
                         tempCanvas.width = sWidth; tempCanvas.height = sHeight;
-                        tempCtx.filter = `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturate}%) sepia(${sepia}%)`;
                         tempDraw(img, tempCanvas.width, tempCanvas.height);
+                        applyFilters(tempCtx, tempCanvas.width, tempCanvas.height, { brightness, contrast, saturate, sepia });
 
                         const offscreen = document.createElement('canvas');
                         const offscreenCtx = offscreen.getContext('2d');
                         if (offscreenCtx) {
                             offscreen.width = sWidth; offscreen.height = sHeight;
-                            offscreenCtx.filter = `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturate}%) sepia(${sepia}%) blur(${blur * scaleFactor}px)`;
+                            offscreenCtx.filter = `blur(${blur * scaleFactor}px)`;
                             tempDraw(img, offscreen.width, offscreen.height);
+                            applyFilters(offscreenCtx, offscreen.width, offscreen.height, { brightness, contrast, saturate, sepia });
                             
                             const mask = document.createElement('canvas');
                             const maskCtx = mask.getContext('2d');

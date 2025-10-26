@@ -17,6 +17,7 @@ interface ImageUploaderProps {
     onMontageClick: () => void;
     onEditVideoClick: (video: ImageFile) => void;
     onDownloadSelectedImages: () => void;
+    onEditImageClick: (image: ImageFile) => void;
 }
 
 const fileToBase64 = (file: File): Promise<string> => {
@@ -28,7 +29,7 @@ const fileToBase64 = (file: File): Promise<string> => {
     });
 };
 
-export const ImageUploader: React.FC<ImageUploaderProps> = ({ images, onImagesChange, onEnhanceClick, isEnhancing, onGenerateVideoClick, isGeneratingVideo, onGenerateMusicClick, isGeneratingMusic, onMontageClick, onEditVideoClick, onDownloadSelectedImages }) => {
+export const ImageUploader: React.FC<ImageUploaderProps> = ({ images, onImagesChange, onEnhanceClick, isEnhancing, onGenerateVideoClick, isGeneratingVideo, onGenerateMusicClick, isGeneratingMusic, onMontageClick, onEditVideoClick, onDownloadSelectedImages, onEditImageClick }) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [openMenuId, setOpenMenuId] = React.useState<string | null>(null);
 
@@ -197,6 +198,13 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ images, onImagesCh
                                         </button>
                                     ) : (
                                         <>
+                                            <button
+                                                onClick={(e) => { e.stopPropagation(); setOpenMenuId(null); onEditImageClick(image); }}
+                                                className="w-full px-4 py-2.5 text-left flex items-center gap-3 hover:bg-gray-50 transition-colors"
+                                            >
+                                                <Icon name="pencil" className="w-4 h-4 text-gray-600" />
+                                                <span className="text-sm font-medium text-gray-700">Edit Image</span>
+                                            </button>
                                             <button
                                                 onClick={(e) => { e.stopPropagation(); setOpenMenuId(null); onEnhanceClick(image); }}
                                                 disabled={isEnhancing}

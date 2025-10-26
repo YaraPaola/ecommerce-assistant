@@ -227,6 +227,7 @@ export const LeftPanel: React.FC<LeftPanelProps> = ({
                         isGeneratingMusic={isGeneratingMusic}
                     onMontageClick={onGenerateMontage}
                     onDownloadSelectedImages={onDownloadSelectedImages}
+                    onEditImageClick={onGenerateImage}
                 />
                  {productData.videos.length > 0 && (
                     <VideoGallery
