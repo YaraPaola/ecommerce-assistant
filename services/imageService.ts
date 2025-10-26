@@ -205,9 +205,7 @@ export const changeImageColor = async (image: ImageFile, color: string): Promise
 
 export const removeObjectFromImage = async (image: ImageFile, eraserPath: {x: number, y: number}[]): Promise<ImageFile> => {
     try {
-        // For now, implement a simple client-side approach using canvas
-        // This is more reliable than relying on Gemini for complex image manipulation
-
+        // Use a more sophisticated approach with inpainting-like effect
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
         if (!ctx) throw new Error("Could not create canvas context");
@@ -226,25 +224,73 @@ export const removeObjectFromImage = async (image: ImageFile, eraserPath: {x: nu
         // Draw the original image
         ctx.drawImage(img, 0, 0);
 
-        // Apply blur effect to the erased areas for a simple "removal" effect
         if (eraserPath.length > 0) {
+            // Create a temporary canvas for the mask
+            const maskCanvas = document.createElement('canvas');
+            const maskCtx = maskCanvas.getContext('2d');
+            if (!maskCtx) throw new Error("Could not create mask canvas context");
+
+            maskCanvas.width = img.width;
+            maskCanvas.height = img.height;
+
+            // Create a more sophisticated mask with feathering
+            maskCtx.fillStyle = 'black';
+            maskCtx.fillRect(0, 0, maskCanvas.width, maskCanvas.height);
+
+            // Draw the eraser path with feathering
+            const path = eraserPath;
+            if (path.length > 0) {
+                maskCtx.save();
+                maskCtx.globalCompositeOperation = 'destination-out';
+
+                // Use a larger brush for the mask to create feathering effect
+                maskCtx.strokeStyle = 'white';
+                maskCtx.lineWidth = 25; // Larger for feathering
+                maskCtx.lineCap = 'round';
+                maskCtx.lineJoin = 'round';
+
+                maskCtx.beginPath();
+                maskCtx.moveTo(path[0].x * maskCanvas.width, path[0].y * maskCanvas.height);
+                for (let i = 1; i < path.length; i++) {
+                    maskCtx.lineTo(path[i].x * maskCanvas.width, path[i].y * maskCanvas.height);
+                }
+                maskCtx.stroke();
+                maskCtx.restore();
+            }
+
+            // Apply the mask to create a smooth removal effect
             ctx.save();
             ctx.globalCompositeOperation = 'destination-out';
-
-            // Draw the eraser path
-            ctx.strokeStyle = 'white';
-            ctx.lineWidth = 20;
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-
-            ctx.beginPath();
-            ctx.moveTo(eraserPath[0].x * canvas.width, eraserPath[0].y * canvas.height);
-            for (let i = 1; i < eraserPath.length; i++) {
-                ctx.lineTo(eraserPath[i].x * canvas.width, eraserPath[i].y * canvas.height);
-            }
-            ctx.stroke();
-
+            ctx.drawImage(maskCanvas, 0, 0);
             ctx.restore();
+
+            // Add a subtle blur effect around the removed area for better integration
+            if (path.length > 0) {
+                ctx.save();
+                ctx.globalCompositeOperation = 'destination-over';
+
+                // Create a soft edge around the removed area
+                const gradient = ctx.createRadialGradient(
+                    path[Math.floor(path.length / 2)].x * canvas.width,
+                    path[Math.floor(path.length / 2)].y * canvas.height,
+                    0,
+                    path[Math.floor(path.length / 2)].x * canvas.width,
+                    path[Math.floor(path.length / 2)].y * canvas.height,
+                    30
+                );
+                gradient.addColorStop(0, 'rgba(255, 255, 255, 0)');
+                gradient.addColorStop(1, 'rgba(255, 255, 255, 0.3)');
+
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(
+                    path[Math.floor(path.length / 2)].x * canvas.width,
+                    path[Math.floor(path.length / 2)].y * canvas.height,
+                    30, 0, 2 * Math.PI
+                );
+                ctx.fill();
+                ctx.restore();
+            }
         }
 
         // Convert canvas to base64
