@@ -102,10 +102,10 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(({ im
                     let scale: number;
                     if (imageAspectRatio > containerAspectRatio) {
                         // Image is wider, fit to width
-                        scale = (clientWidth * 0.95) / imageRef.current.width!;
+                        scale = (clientWidth * 0.98) / imageRef.current.width!;
                     } else {
                         // Image is taller, fit to height
-                        scale = (clientHeight * 0.95) / imageRef.current.height!;
+                        scale = (clientHeight * 0.98) / imageRef.current.height!;
                     }
 
                     imageRef.current.scale(scale);
@@ -124,8 +124,20 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(({ im
 
         fabric.Image.fromURL(`data:${image.mimeType};base64,${image.base64}`, (img) => {
             imageRef.current = img;
-            img.selectable = !isErasing; // Prevent selection when erasing
+
+            // Lock image in place - no dragging or resizing manually
+            img.selectable = false;
+            img.evented = false;
+            img.hasControls = false;
+            img.hasBorders = false;
+            img.lockMovementX = true;
+            img.lockMovementY = true;
+            img.lockScalingX = true;
+            img.lockScalingY = true;
+            img.lockRotation = true;
+
             canvas.add(img);
+            canvas.selection = false; // Disable group selection
             resizeCanvas();
         });
 
