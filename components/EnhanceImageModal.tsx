@@ -81,6 +81,10 @@ export const EnhanceImageModal: React.FC<EnhanceImageModalProps> = ({ isOpen, on
                        <ImageEditor
                             ref={editorRef}
                             image={editedImageFile}
+                            onColorChangeRequest={handleColorChangeRequest}
+                            isChangingColor={isChangingColor}
+                            onObjectRemovalRequest={onObjectRemovalRequest}
+                            isRemovingObject={isRemovingObject}
                         />
                     </div>
 
