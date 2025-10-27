@@ -87,25 +87,40 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(({ im
 
         const resizeCanvas = () => {
             const container = canvas.getElement().parentElement;
-            if (container && imageRef.current) {
+            if (container) {
                 const { clientWidth, clientHeight } = container;
-                const imageAspectRatio = imageRef.current.width! / imageRef.current.height!;
-                const containerAspectRatio = clientWidth / clientHeight;
 
-                let scale;
-                if (imageAspectRatio > containerAspectRatio) {
-                    scale = clientWidth / imageRef.current.width!;
-                } else {
-                    scale = clientHeight / imageRef.current.height!;
-                }
-
-                imageRef.current.scale(scale);
+                // Set canvas size to fill container
                 canvas.setWidth(clientWidth);
                 canvas.setHeight(clientHeight);
-                canvas.centerObject(imageRef.current);
+
+                // Scale image to fit if it exists
+                if (imageRef.current) {
+                    const imageAspectRatio = imageRef.current.width! / imageRef.current.height!;
+                    const containerAspectRatio = clientWidth / clientHeight;
+
+                    let scale: number;
+                    if (imageAspectRatio > containerAspectRatio) {
+                        // Image is wider, fit to width
+                        scale = (clientWidth * 0.95) / imageRef.current.width!;
+                    } else {
+                        // Image is taller, fit to height
+                        scale = (clientHeight * 0.95) / imageRef.current.height!;
+                    }
+
+                    imageRef.current.scale(scale);
+                    canvas.centerObject(imageRef.current);
+                }
                 canvas.renderAll();
             }
         };
+
+        // Initial canvas sizing
+        const container = canvas.getElement().parentElement;
+        if (container) {
+            canvas.setWidth(container.clientWidth);
+            canvas.setHeight(container.clientHeight);
+        }
 
         fabric.Image.fromURL(`data:${image.mimeType};base64,${image.base64}`, (img) => {
             imageRef.current = img;
@@ -159,8 +174,8 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(({ im
 
     return (
         <div className="w-full h-full flex flex-col gap-2">
-            <div className="flex-grow flex items-center justify-center bg-gray-900 rounded overflow-hidden min-h-0 relative">
-                <canvas ref={canvasRef} />
+            <div className="flex-grow flex items-center justify-center bg-gray-900 rounded overflow-hidden relative" style={{ minHeight: '500px' }}>
+                <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '100%' }} />
             </div>
             <div className="flex-shrink-0 bg-gray-100 p-2 rounded space-y-2 max-h-48 overflow-y-auto">
                 <div className="flex flex-wrap items-center gap-1.5">
