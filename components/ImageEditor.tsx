@@ -165,6 +165,15 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(({ im
     const [eraserPath, setEraserPath] = useState<{x: number, y: number}[]>([]);
     const [isErasing, setIsErasing] = useState(false);
 
+    // Brush Tools (Pixelate, Blur, Color)
+    type BrushMode = 'none' | 'pixelate' | 'blur' | 'color';
+    const [brushMode, setBrushMode] = useState<BrushMode>('none');
+    const [brushSize, setBrushSize] = useState(40);
+    const [brushStrength, setBrushStrength] = useState(50); // 0-100
+    const [brushColor, setBrushColor] = useState('#ff0000');
+    const [brushStrokes, setBrushStrokes] = useState<{x: number, y: number}[]>([]);
+    const [isBrushing, setIsBrushing] = useState(false);
+
     const [colorPrompt, setColorPrompt] = useState('');
     
     // Interaction states
@@ -410,7 +419,7 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(({ im
             ctx.lineWidth = eraserSize;
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
-            
+
             ctx.beginPath();
             ctx.moveTo(eraserPath[0].x * canvas.width, eraserPath[0].y * canvas.height);
             for (let i = 1; i < eraserPath.length; i++) {
@@ -419,7 +428,29 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(({ im
             ctx.stroke();
             ctx.restore();
         }
-    }, [rotation, brightness, contrast, saturate, sepia, blur, pixelate, cropRatio, focusArea, textOverlay, eraserPath, eraserSize]);
+
+        // Draw brush strokes preview
+        if (brushStrokes.length > 0) {
+            ctx.save();
+            let strokeColor = 'rgba(0, 150, 255, 0.5)'; // Default blue
+            if (brushMode === 'pixelate') strokeColor = 'rgba(255, 165, 0, 0.5)'; // Orange
+            if (brushMode === 'blur') strokeColor = 'rgba(100, 200, 100, 0.5)'; // Green
+            if (brushMode === 'color') strokeColor = brushColor.replace(')', ', 0.5)').replace('rgb', 'rgba'); // User color
+
+            ctx.strokeStyle = strokeColor;
+            ctx.lineWidth = brushSize;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+
+            ctx.beginPath();
+            ctx.moveTo(brushStrokes[0].x * canvas.width, brushStrokes[0].y * canvas.height);
+            for (let i = 1; i < brushStrokes.length; i++) {
+                ctx.lineTo(brushStrokes[i].x * canvas.width, brushStrokes[i].y * canvas.height);
+            }
+            ctx.stroke();
+            ctx.restore();
+        }
+    }, [rotation, brightness, contrast, saturate, sepia, blur, pixelate, cropRatio, focusArea, textOverlay, eraserPath, eraserSize, brushStrokes, brushMode, brushSize, brushColor]);
 
     useEffect(() => {
         const img = imageRef.current;
@@ -462,11 +493,18 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(({ im
     const handleMouseDown = (e: React.MouseEvent) => {
         const coords = getCanvasRelativeCoords(e);
         if (!coords) return;
-        
+
         // Handle eraser mode
         if (isEraserMode) {
             setIsErasing(true);
             setEraserPath([coords]);
+            return;
+        }
+
+        // Handle brush modes
+        if (brushMode !== 'none') {
+            setIsBrushing(true);
+            setBrushStrokes([coords]);
             return;
         }
         
@@ -513,6 +551,12 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(({ im
             return;
         }
 
+        // Handle brush drawing
+        if (isBrushing && brushMode !== 'none') {
+            setBrushStrokes(prev => [...prev, coords]);
+            return;
+        }
+
         if (isDraggingText && textOverlay) {
             setTextOverlay({ ...textOverlay, x: coords.x - textDragStartOffset.current.x, y: coords.y - textDragStartOffset.current.y });
             return;
@@ -542,11 +586,115 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(({ im
     };
 
     const handleMouseUp = () => {
+        // Apply brush effect when finishing a stroke
+        if (isBrushing && brushStrokes.length > 0 && brushMode !== 'none') {
+            applyBrushEffect();
+        }
         setIsErasing(false);
+        setIsBrushing(false);
         setDragState(null);
         setIsDraggingText(false);
         setIsHoveringText(false);
     };
+
+    // Apply brush effects (pixelate, blur, color) to the offscreen canvas
+    const applyBrushEffect = useCallback(() => {
+        if (brushStrokes.length === 0 || brushMode === 'none') return;
+
+        const offscreenCanvas = offscreenCanvasRef.current;
+        const ctx = offscreenCanvas.getContext('2d');
+        if (!ctx) return;
+
+        const img = imageRef.current;
+
+        // Get image data from affected areas
+        brushStrokes.forEach((point) => {
+            const x = point.x * img.width;
+            const y = point.y * img.height;
+            const radius = brushSize * (brushStrength / 100);
+
+            if (brushMode === 'pixelate') {
+                // Apply pixelation effect
+                const pixelSize = Math.max(2, Math.floor(radius / 10));
+                const startX = Math.max(0, Math.floor(x - radius));
+                const startY = Math.max(0, Math.floor(y - radius));
+                const endX = Math.min(img.width, Math.ceil(x + radius));
+                const endY = Math.min(img.height, Math.ceil(y + radius));
+
+                for (let py = startY; py < endY; py += pixelSize) {
+                    for (let px = startX; px < endX; px += pixelSize) {
+                        const dist = Math.sqrt(Math.pow(px - x, 2) + Math.pow(py - y, 2));
+                        if (dist <= radius) {
+                            const imageData = ctx.getImageData(px, py, 1, 1);
+                            ctx.fillStyle = `rgba(${imageData.data[0]}, ${imageData.data[1]}, ${imageData.data[2]}, ${imageData.data[3] / 255})`;
+                            ctx.fillRect(px, py, pixelSize, pixelSize);
+                        }
+                    }
+                }
+            } else if (brushMode === 'blur') {
+                // Apply blur effect
+                const blurRadius = Math.max(1, Math.floor(radius / 10));
+                const startX = Math.max(0, Math.floor(x - radius));
+                const startY = Math.max(0, Math.floor(y - radius));
+                const endX = Math.min(img.width, Math.ceil(x + radius));
+                const endY = Math.min(img.height, Math.ceil(y + radius));
+
+                const imageData = ctx.getImageData(startX, startY, endX - startX, endY - startY);
+                const pixels = imageData.data;
+                const width = endX - startX;
+                const height = endY - startY;
+
+                for (let py = 0; py < height; py++) {
+                    for (let px = 0; px < width; px++) {
+                        const dist = Math.sqrt(Math.pow((startX + px) - x, 2) + Math.pow((startY + py) - y, 2));
+                        if (dist <= radius) {
+                            let r = 0, g = 0, b = 0, count = 0;
+
+                            for (let ky = -blurRadius; ky <= blurRadius; ky++) {
+                                for (let kx = -blurRadius; kx <= blurRadius; kx++) {
+                                    const nx = px + kx;
+                                    const ny = py + ky;
+                                    if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
+                                        const idx = (ny * width + nx) * 4;
+                                        r += pixels[idx];
+                                        g += pixels[idx + 1];
+                                        b += pixels[idx + 2];
+                                        count++;
+                                    }
+                                }
+                            }
+
+                            const idx = (py * width + px) * 4;
+                            pixels[idx] = r / count;
+                            pixels[idx + 1] = g / count;
+                            pixels[idx + 2] = b / count;
+                        }
+                    }
+                }
+
+                ctx.putImageData(imageData, startX, startY);
+            } else if (brushMode === 'color') {
+                // Apply color tint effect
+                const hex = brushColor.replace('#', '');
+                const r = parseInt(hex.substr(0, 2), 16);
+                const g = parseInt(hex.substr(2, 2), 16);
+                const b = parseInt(hex.substr(4, 2), 16);
+                const alpha = brushStrength / 100;
+
+                ctx.save();
+                ctx.globalCompositeOperation = 'source-atop';
+                ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+
+                ctx.beginPath();
+                ctx.arc(x, y, radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        });
+
+        setBrushStrokes([]);
+        draw(); // Redraw canvas with updated image
+    }, [brushStrokes, brushMode, brushSize, brushStrength, brushColor, draw]);
 
     useImperativeHandle(ref, () => ({
         getEditedImageData: () => {
@@ -688,7 +836,7 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(({ im
     
     useEffect(draw, [draw]);
 
-    const cursorStyle = isEraserMode ? 'crosshair' : (isDraggingText || dragState ? 'grabbing' : (isHoveringText ? 'move' : 'grab'));
+    const cursorStyle = (isEraserMode || brushMode !== 'none') ? 'crosshair' : (isDraggingText || dragState ? 'grabbing' : (isHoveringText ? 'move' : 'grab'));
 
     return (
         <div className="w-full h-full flex flex-col gap-2">
@@ -815,7 +963,7 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(({ im
                 <div className="border-t border-gray-300 pt-3 space-y-3">
                     <div className="flex items-center justify-between">
                         <h4 className="text-sm font-medium text-gray-700">🎨 AI Object Remover</h4>
-                        <ControlButton onClick={() => setIsEraserMode(!isEraserMode)} active={isEraserMode} title="Toggle Eraser Mode">
+                        <ControlButton onClick={() => { setBrushMode('none'); setIsEraserMode(!isEraserMode); }} active={isEraserMode} title="Toggle Eraser Mode">
                             <Icon name={isEraserMode ? 'check' : 'trash'} />
                         </ControlButton>
                     </div>
@@ -855,6 +1003,72 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(({ im
                         </div>
                     )}
                 </div>
+
+                <div className="border-t border-gray-300 pt-3 space-y-3">
+                    <div className="flex items-center justify-between">
+                        <h4 className="text-sm font-medium text-gray-700">🖌️ Brush Tools</h4>
+                        <div className="flex gap-1">
+                            <ControlButton
+                                onClick={() => { setIsEraserMode(false); setBrushMode('pixelate'); }}
+                                active={brushMode === 'pixelate'}
+                                title="Pixelate Brush"
+                            >
+                                <span className="text-xs">Pixelate</span>
+                            </ControlButton>
+                            <ControlButton
+                                onClick={() => { setIsEraserMode(false); setBrushMode('blur'); }}
+                                active={brushMode === 'blur'}
+                                title="Blur Brush"
+                            >
+                                <span className="text-xs">Blur</span>
+                            </ControlButton>
+                            <ControlButton
+                                onClick={() => { setIsEraserMode(false); setBrushMode('color'); }}
+                                active={brushMode === 'color'}
+                                title="Color Brush"
+                            >
+                                <span className="text-xs">Color</span>
+                            </ControlButton>
+                        </div>
+                    </div>
+                    {brushMode !== 'none' && (
+                        <div className="space-y-2 bg-blue-50 p-3 rounded-lg">
+                            <p className="text-xs text-gray-600">
+                                {brushMode === 'pixelate' && 'Paint areas to pixelate them.'}
+                                {brushMode === 'blur' && 'Paint areas to blur them.'}
+                                {brushMode === 'color' && 'Paint areas to tint them with color.'}
+                            </p>
+                            <div className="grid grid-cols-2 gap-3">
+                                <SliderControl label="Brush Size" min={10} max={100} unit="px" value={brushSize} onChange={e => setBrushSize(Number(e.target.value))} />
+                                <SliderControl label="Strength" min={10} max={100} unit="%" value={brushStrength} onChange={e => setBrushStrength(Number(e.target.value))} />
+                            </div>
+                            {brushMode === 'color' && (
+                                <div className="flex items-center gap-2">
+                                    <label className="text-xs text-gray-600">Brush Color:</label>
+                                    <input
+                                        type="color"
+                                        value={brushColor}
+                                        onChange={e => setBrushColor(e.target.value)}
+                                        className="w-12 h-10 p-1 bg-white border border-gray-300 rounded-lg cursor-pointer"
+                                    />
+                                </div>
+                            )}
+                            <div className="flex gap-2">
+                                <Button
+                                    onClick={() => {
+                                        setBrushMode('none');
+                                        setBrushStrokes([]);
+                                    }}
+                                    variant="secondary"
+                                    className="flex-1"
+                                >
+                                    Done
+                                </Button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+
                 <div className="border-t border-gray-300 pt-3 grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-2">
                     <SliderControl label="Brightness" value={brightness} onChange={e => setBrightness(Number(e.target.value))} />
                     <SliderControl label="Contrast" value={contrast} onChange={e => setContrast(Number(e.target.value))} />
