@@ -232,7 +232,6 @@ export const removeObjectFromImage = async (image: ImageFile, eraserPath: {x: nu
         ctx.lineWidth = Math.max(20, Math.min(img.width, img.height) / 20); // Responsive brush size
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
-        ctx.globalCompositeOperation = 'destination-out';
 
         if (eraserPath.length > 0) {
             ctx.beginPath();
@@ -241,6 +240,14 @@ export const removeObjectFromImage = async (image: ImageFile, eraserPath: {x: nu
                 ctx.lineTo(eraserPath[i].x * canvas.width, eraserPath[i].y * canvas.height);
             }
             ctx.stroke();
+
+            console.log(`🎨 Mask created: ${eraserPath.length} points, canvas ${canvas.width}x${canvas.height}, brush width ${ctx.lineWidth}px`);
+
+            // Debug: Show the mask in a new window/tab (optional - comment out in production)
+            // const maskWindow = window.open();
+            // if (maskWindow) {
+            //     maskWindow.document.write(`<img src="${canvas.toDataURL()}" />`);
+            // }
         }
 
         const maskData = canvas.toDataURL('image/png').split(',')[1];
@@ -249,6 +256,23 @@ export const removeObjectFromImage = async (image: ImageFile, eraserPath: {x: nu
             model: 'gemini-2.5-flash-image',
             contents: {
                 parts: [
+                    {
+                        text: `I will provide you with two images:
+1. The ORIGINAL image (a product photo)
+2. A MASK image showing WHITE areas on a BLACK background
+
+Your task: Generate a new version of the original image where the WHITE areas in the mask have been removed and intelligently filled with appropriate background content.
+
+CRITICAL INSTRUCTIONS:
+1. **Identify Mask Areas:** Look at the second image (the mask). The WHITE pixels indicate areas to remove from the first image.
+2. **Remove and Fill:** In the original image, remove/erase the areas corresponding to the white mask pixels, and intelligently fill those areas with background content that seamlessly matches the surrounding environment.
+3. **Product Integrity:** If the main product is NOT marked for removal, keep it exactly as-is. Only modify the masked areas.
+4. **Seamless Inpainting:** Fill removed areas with textures, colors, and patterns that blend naturally with the surrounding background (e.g., continue table surface, wall texture, floor patterns, etc.).
+5. **No Artifacts:** Ensure smooth transitions with no visible seams, edges, or artifacts.
+6. **Preserve Quality:** Maintain the original image's resolution, lighting, and overall quality.
+
+Return ONLY the edited image with the masked areas removed and filled.`,
+                    },
                     {
                         inlineData: {
                             data: base64,
@@ -260,18 +284,6 @@ export const removeObjectFromImage = async (image: ImageFile, eraserPath: {x: nu
                             data: maskData,
                             mimeType: 'image/png',
                         },
-                    },
-                    {
-                        text: `Your task is to remove the objects or areas marked by the WHITE AREAS in the mask (second image) from the original product image (first image).
-
-CRITICAL RULES:
-1. **Product Integrity:** Do NOT change the main product in the image. Only remove the masked areas and intelligently fill them with appropriate background content that matches the surrounding area.
-2. **Seamless Integration:** The removed areas should be filled with content that seamlessly matches the surrounding background, lighting, and texture.
-3. **Context Awareness:** Fill the removed areas with content that makes sense for the image context (e.g., if it's a product on a table, fill with more table surface; if it's a wall-mounted item, fill with wall texture).
-4. **No Artifacts:** Ensure there are no visible seams, edges, or artifacts where the removal occurred.
-5. **Preserve Quality:** Maintain the original image quality, lighting, and style.
-
-The white areas in the mask indicate what should be removed. Fill those areas intelligently with matching background content.`,
                     },
                 ],
             },
