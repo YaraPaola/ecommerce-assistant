@@ -692,12 +692,12 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(({ im
     const cursorStyle = isEraserMode ? 'crosshair' : (isDraggingText || dragState ? 'grabbing' : (isHoveringText ? 'move' : 'grab'));
 
     return (
-        <div className="w-full h-full flex flex-col gap-4">
+        <div className="w-full h-full flex flex-col gap-2">
             <div ref={containerRef} className="flex-grow flex items-center justify-center bg-gray-200 rounded-lg overflow-hidden min-h-0 relative"
                 onMouseDown={handleMouseDown} onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} onMouseLeave={handleMouseUp} style={{ cursor: cursorStyle }}>
                 <canvas ref={canvasRef} />
             </div>
-            <div className="flex-shrink-0 bg-gray-100 p-3 rounded-b-lg space-y-3 overflow-y-auto">
+            <div className="flex-shrink-0 bg-gray-100 p-2 rounded-b-lg space-y-2 overflow-y-auto max-h-64">
                  <div className="flex items-end gap-2">
                     <div className="flex-grow">
                         <label htmlFor="color-prompt" className="text-sm font-medium text-gray-700">AI Color Change</label>
