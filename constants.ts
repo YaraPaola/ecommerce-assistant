@@ -16,22 +16,34 @@ export const TONES = [
 ];
 
 export const BACKGROUND_PRESETS = [
-    // Studio Variations (Expanded)
-    { 
-        name: 'Studio - White Clean', 
-        prompt: 'Professional, clean product photo in a minimalist studio setting with soft, even lighting and a seamless pure white background.' 
+    // Studio Variations
+    {
+        name: 'Studio - White Clean',
+        prompt: 'Professional, clean product photo in a minimalist studio setting with soft, even lighting and a seamless pure white background.'
     },
-    { 
-        name: 'Studio - Soft Gray', 
-        prompt: 'Professional studio with seamless soft gray background, gentle diffused lighting creating subtle shadows, minimal and sophisticated.' 
+    {
+        name: 'Studio - Soft Gray',
+        prompt: 'Professional studio with seamless soft gray background, gentle diffused lighting creating subtle shadows, minimal and sophisticated.'
     },
-    { 
-        name: 'Studio - Black Dramatic', 
-        prompt: 'Dramatic studio photo with pure black seamless background, subtle rim lighting highlighting product edges, bold and modern.' 
+    {
+        name: 'Studio - Black Dramatic',
+        prompt: 'Dramatic studio photo with pure black seamless background, subtle rim lighting highlighting product edges, bold and modern.'
     },
-    { 
-        name: 'Studio - Gradient Blue', 
-        prompt: 'Studio setting with smooth gradient background from light to darker blue, professional lighting with soft shadows.' 
+    {
+        name: 'Studio - Gradient Blue',
+        prompt: 'Studio setting with smooth gradient background from light to darker blue, professional lighting with soft shadows.'
+    },
+    {
+        name: 'Studio - Flat Lay White',
+        prompt: 'Flat lay showing the ITEM surrounded by complementary supplies (pen, notebook, glasses). Clean white background.'
+    },
+    {
+        name: 'Studio - Vibrant Teal',
+        prompt: 'ITEM placed on a seamless vibrant teal background. Studio lighting with strong contrast and shadows to emphasize its shape.'
+    },
+    {
+        name: 'Studio - Holiday Accents',
+        prompt: 'ITEM nestled amongst subtle holiday decorations (pine sprig, copper ornaments). Soft, warm bokeh lights in the blurred background.'
     },
     
     // Twinkly Lights Variations (Expanded)
@@ -124,40 +136,130 @@ export const BACKGROUND_PRESETS = [
         prompt: 'Item on busy home office desk with coffee cup, notebook, and plants visible but out of focus, productive vibe.' 
     },
     
-    // Office Space Variations (Expanded)
-    { 
-        name: 'Office Space - Oak Natural', 
-        prompt: 'Product on warm oak wood desk in modern home office. Softly blurred background showing window with daylight and green plants, realistic shadows.' 
+    // Office Space Variations
+    {
+        name: 'Office - Scandinavian Light',
+        prompt: 'ITEM on light pine desk in Scandinavian-style office, window with bright natural light, plants and simple decor in soft focus.'
     },
-    { 
-        name: 'Office Space - White Minimal', 
-        prompt: 'Item on pristine white desk, background with soft natural light from large windows, minimalist modern office aesthetic.' 
+    {
+        name: 'Office - Executive Mahogany',
+        prompt: 'ITEM on a large, mahogany desk. Background includes a leather blotter and a framed landscape painting. Dark, rich tones and controlled studio light.'
     },
-    { 
-        name: 'Office Space - Industrial Dark', 
-        prompt: 'Product on dark walnut desk in industrial-style office, exposed brick visible but blurred, moody dramatic lighting.' 
+    {
+        name: 'Office - Loft Coworking',
+        prompt: 'ITEM next to a laptop on a distressed wood table in a loft-style co-working space. Exposed brick in the background. Bright, cool white light with a dynamic feel.'
     },
-    { 
-        name: 'Office Space - Scandinavian Light', 
-        prompt: 'Item on light pine desk in Scandinavian-style office, bright natural light, plants and simple decor in soft focus.' 
+    {
+        name: 'Office - Floating Shelf Pastel',
+        prompt: 'ITEM on a white floating shelf above a desk. Pale pastel wall in the background. High-key, airy photo focused on functionality.'
+    },
+    {
+        name: 'Office - Oak Natural',
+        prompt: 'Product on warm oak wood desk in modern home office. Softly blurred background showing window with daylight and green plants, realistic shadows.'
+    },
+    {
+        name: 'Office - White Minimal',
+        prompt: 'Item on pristine white desk, background with soft natural light from large windows, minimalist modern office aesthetic.'
+    },
+    {
+        name: 'Office - Industrial Dark',
+        prompt: 'Product on dark walnut desk in industrial-style office, exposed brick visible but blurred, moody dramatic lighting.'
     },
     
-    // Outdoor Variations (Expanded)
-    { 
-        name: 'Outdoor - Forest Moss', 
-        prompt: 'Outdoor shot on natural mossy wood surface, softly blurred forest background with dappled sunlight through trees.' 
+    // Living Room Variations
+    {
+        name: 'Living Room - Bookshelf',
+        prompt: 'ITEM on a dark wood, open-back bookshelf. Soft, warm lighting from a nearby lamp. Background features hardback books and a subtle succulent. Shallow depth of field.'
     },
-    { 
-        name: 'Outdoor - Beach Sand', 
-        prompt: 'Product on smooth sandy surface, blurred ocean waves and blue sky in background, bright coastal sunlight.' 
+    {
+        name: 'Living Room - Marble Coffee Table',
+        prompt: 'ITEM centered on a round, low-profile marble coffee table. A single art book and a small, delicate vase of flowers are nearby. Focus on clean lines and negative space.'
     },
-    { 
-        name: 'Outdoor - Garden Stone', 
-        prompt: 'Item on natural stone surface in garden setting, vibrant flowers and greenery softly out of focus, fresh daylight.' 
+    {
+        name: 'Living Room - Fireplace Mantel',
+        prompt: 'ITEM prominently displayed on a painted white fireplace mantel. A cluster of pillar candles and a framed mirror are visible. Soft, focused light highlighting the item as a centerpiece.'
     },
-    { 
-        name: 'Outdoor - Mountain Rock', 
-        prompt: 'Product on rocky mountain surface, blurred dramatic mountain landscape and clouds in background, crisp and adventurous.' 
+    {
+        name: 'Living Room - Cozy Armchair',
+        prompt: 'ITEM on a small wooden side table next to a chunky knit, overstuffed armchair. A mug of hot tea and a reading light create a warm, inviting atmosphere.'
+    },
+    {
+        name: 'Living Room - Dusk Window',
+        prompt: 'Item on rustic surface near a window at dusk, soft lights in background creating warm bokeh, plants visible.'
+    },
+
+    // Kitchen Variations
+    {
+        name: 'Kitchen - White Marble Counter',
+        prompt: 'ITEM on a bright white marble kitchen counter. Background shows a textured tile backsplash and a stainless steel appliance. Abundant, clear daylight.'
+    },
+    {
+        name: 'Kitchen - Reclaimed Wood Shelf',
+        prompt: 'ITEM on a reclaimed wood open shelf in a kitchen. Background shows a jar of dry goods and a mortar and pestle. Warm, overhead lighting emphasizing texture and utility.'
+    },
+    {
+        name: 'Kitchen - Grey Quartz Island',
+        prompt: 'ITEM placed centrally on a dark grey quartz kitchen island. Background features blurred stainless steel appliances. High contrast, focused studio light.'
+    },
+
+    // Bedside Table Variations
+    {
+        name: 'Bedside - Oak Table Morning',
+        prompt: 'ITEM on a round oak bedside table. Linen sheets in the background. Soft, diffused morning light and a tranquil mood.'
+    },
+
+    // Entryway Variations
+    {
+        name: 'Entryway - Mid-Century Console',
+        prompt: 'ITEM on a narrow, mid-century modern console. Sun streaming in from the side, creating long shadows. Warm and welcoming.'
+    },
+    {
+        name: 'Entryway - Woven Bench',
+        prompt: 'ITEM resting on a small, woven bench below a set of brass wall hooks. Background includes a textured, white macrame wall hanging. Soft, low-angle light.'
+    },
+
+    // Bathroom Variations
+    {
+        name: 'Bathroom - Concrete Vanity',
+        prompt: 'ITEM on a smooth, grey concrete vanity. Background shows a large mirror with an LED light. Focus on texture and clean, spa-like lines.'
+    },
+    {
+        name: 'Bathroom - Shower Niche Spa',
+        prompt: 'ITEM set inside a tiled shower niche. Subtle water droplets on the item and surrounding tiles. Dark, dramatic lighting to enhance a high-end, spa feel.'
+    },
+    {
+        name: 'Bathroom - Double Vanity',
+        prompt: 'ITEM positioned between two sinks on a white porcelain double vanity. A colorful towel and a small rubber duck are visible in the soft focus background. Bright, diffused daylight.'
+    },
+
+    // Game Room Variations
+    {
+        name: 'Game Room - Neon Shelf',
+        prompt: 'ITEM sitting on a dedicated shelf next to a stack of classic board games and a vintage video game console. Vibrant, neon-like lighting (e.g., blue and magenta).'
+    },
+
+    // Green Room Variations
+    {
+        name: 'Green Room - Lush Plants',
+        prompt: 'ITEM surrounded by large, lush house plants (e.g., Monstera, Fiddle Leaf Fig) on a sun-drenched floor. Direct natural light creating high-contrast leaf shadows.'
+    },
+
+    // Outdoor Variations
+    {
+        name: 'Outdoor - Forest Moss',
+        prompt: 'Outdoor shot on natural mossy wood surface, softly blurred forest background with dappled sunlight through trees.'
+    },
+    {
+        name: 'Outdoor - Beach Sand',
+        prompt: 'Product on smooth sandy surface, blurred ocean waves and blue sky in background, bright coastal sunlight.'
+    },
+    {
+        name: 'Outdoor - Garden Stone',
+        prompt: 'Item on natural stone surface in garden setting, vibrant flowers and greenery softly out of focus, fresh daylight.'
+    },
+    {
+        name: 'Outdoor - Mountain Rock',
+        prompt: 'Product on rocky mountain surface, blurred dramatic mountain landscape and clouds in background, crisp and adventurous.'
     }
 ];
 
