@@ -30,14 +30,14 @@ export const urlToImageFile = async (url: string, referer?: string): Promise<Ima
         const blob = await response.blob();
         const mimeType = blob.type || 'image/jpeg';
 
-        // Convert blob to base64
+        // Convert blob to base64 and check dimensions
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.onloadend = () => {
                 const base64String = reader.result as string;
                 // Remove the data URL prefix (e.g., "data:image/jpeg;base64,")
                 const base64Data = base64String.split(',')[1];
-                
+
                 // Extract filename from URL
                 let filename = 'image.jpg';
                 try {
@@ -52,13 +52,34 @@ export const urlToImageFile = async (url: string, referer?: string): Promise<Ima
                     // If URL parsing fails, use default filename
                 }
 
-                resolve({
-                    id: crypto.randomUUID(),
-                    name: filename,
-                    base64: base64Data,
-                    mimeType: mimeType,
-                    selected: true,
-                });
+                // Check image dimensions
+                const img = new Image();
+                img.onload = () => {
+                    console.log(`📷 Image: ${filename} - ${img.width}x${img.height}px (${Math.round(blob.size / 1024)}KB)`);
+
+                    if (img.width < 500 || img.height < 500) {
+                        console.warn(`⚠️ Low resolution image detected: ${filename} is only ${img.width}x${img.height}px. Consider using higher quality images (recommended: 1500px+)`);
+                    }
+
+                    resolve({
+                        id: crypto.randomUUID(),
+                        name: filename,
+                        base64: base64Data,
+                        mimeType: mimeType,
+                        selected: true,
+                    });
+                };
+                img.onerror = () => {
+                    // If we can't load the image for dimension check, still resolve with the file
+                    resolve({
+                        id: crypto.randomUUID(),
+                        name: filename,
+                        base64: base64Data,
+                        mimeType: mimeType,
+                        selected: true,
+                    });
+                };
+                img.src = base64String;
             };
             reader.onerror = () => {
                 reject(new Error(`Failed to convert image to base64 for ${url}`));
