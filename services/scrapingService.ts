@@ -24,7 +24,7 @@ export const fetchProductFromURL = async (url: string): Promise<{
 1. Use your search tool to access the content of the URL.
 2. From the HTML content, identify and extract the main product's title, its detailed description, its price, an array of all main product image URLs, dimensions, material, weight, and any other specifications.
 3. The price must be a single number (e.g., extract 19.99 from "$19.99"). If a price range is given, use the lower value. If no price is found, return 0.
-4. Image URLs must be complete, absolute URLs.
+4. Image URLs must be complete, absolute URLs. IMPORTANT: Prioritize LARGE, HIGH-RESOLUTION product images. Avoid thumbnails, small previews, or icons. Look for URLs containing keywords like "large", "original", "full", "zoom", or high resolution indicators. Skip URLs with "thumb", "small", "icon", "preview" in the path.
 5. Extract dimensions (e.g., "6\" L x 4.5\" W x 1\" D"), material, weight, and any other product specifications you can find.
 6. Format the extracted data into a single, valid JSON object.
 7. The JSON object must have these keys: "title", "description", "price", "imageUrls", and optionally "dimensions", "material", "weight", "specifications".
@@ -121,7 +121,7 @@ export const extractProductFromHtml = async (htmlContent: string): Promise<{
         const prompt = `Your task is to act as an expert HTML parser for a product page. You will be given the full HTML content.
 1. Analyze the HTML to extract the main product's title, its detailed description, its price, all main product image URLs, dimensions, material, weight, and any other specifications.
 2. The price must be a single number (e.g., extract 19.99 from "$19.99" or "£19.99"). If a price range is given (e.g., "$19.99 - $24.99"), use the lower value. If no price can be found, you MUST return 0.
-3. Image URLs must be complete, absolute URLs.
+3. Image URLs must be complete, absolute URLs. IMPORTANT: Prioritize LARGE, HIGH-RESOLUTION product images. Avoid thumbnails, small previews, or icons. Look for URLs containing keywords like "large", "original", "full", "zoom", "_2000x", "_1500x", or high resolution indicators. Skip URLs with "thumb", "small", "icon", "preview", "_100x", "_200x" in the path.
 4. Extract dimensions (e.g., "6\" L x 4.5\" W x 1\" D"), material, weight, and any other product specifications you can find.
 5. Format the extracted data into a single, valid JSON object that strictly adheres to the provided schema.
 6. CRITICAL: Your entire response must be ONLY the JSON object. Do not include any other text, explanations, or markdown formatting.
