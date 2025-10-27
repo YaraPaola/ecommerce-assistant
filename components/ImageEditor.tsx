@@ -59,14 +59,33 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(({ im
         const canvas = new fabric.Canvas(canvasRef.current);
         fabricCanvasRef.current = canvas;
 
+        const resizeCanvas = () => {
+            const container = canvas.getElement().parentElement;
+            if (container) {
+                canvas.setWidth(container.clientWidth);
+                canvas.setHeight(container.clientHeight);
+                if (imageRef.current) {
+                    imageRef.current.scaleToWidth(canvas.getWidth());
+                    imageRef.current.scaleToHeight(canvas.getHeight());
+                    canvas.centerObject(imageRef.current);
+                }
+                canvas.renderAll();
+            }
+        };
+
         fabric.Image.fromURL(`data:${image.mimeType};base64,${image.base64}`, (img) => {
-            img.scaleToWidth(canvas.getWidth());
-            img.scaleToHeight(canvas.getHeight());
-            canvas.add(img);
             imageRef.current = img;
+            canvas.add(img);
+            resizeCanvas();
         });
 
+        const resizeObserver = new ResizeObserver(resizeCanvas);
+        if (canvas.getElement().parentElement) {
+            resizeObserver.observe(canvas.getElement().parentElement!);
+        }
+
         return () => {
+            resizeObserver.disconnect();
             canvas.dispose();
         };
     }, [image]);
