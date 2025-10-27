@@ -37,8 +37,8 @@ export const EnhanceImageModal: React.FC<EnhanceImageModalProps> = ({ isOpen, on
 
     if (!isOpen) return null;
 
-    const handleGenerate = async () => {
-        const editedImageData = await editorRef.current?.getEditedImageData();
+    const handleGenerate = () => {
+        const editedImageData = editorRef.current?.getEditedImageData();
         if (editedImageData) {
             if (!customPrompt.trim()) {
                 showToast('error', 'Please select a background preset or write a custom prompt.');
@@ -81,10 +81,6 @@ export const EnhanceImageModal: React.FC<EnhanceImageModalProps> = ({ isOpen, on
                        <ImageEditor
                             ref={editorRef}
                             image={editedImageFile}
-                            onColorChangeRequest={handleColorChangeRequest}
-                            isChangingColor={isChangingColor}
-                            onObjectRemovalRequest={onObjectRemovalRequest}
-                            isRemovingObject={isRemovingObject}
                         />
                     </div>
 
