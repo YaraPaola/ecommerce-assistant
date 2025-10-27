@@ -162,21 +162,21 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(({ im
     }));
 
     return (
-        <div className="w-full h-full flex flex-col gap-2">
-            <div className="flex-1 bg-gray-900 rounded overflow-hidden relative" style={{ minHeight: '600px', height: '100%' }}>
-                <canvas ref={canvasRef} className="w-full h-full" />
+        <div className="w-full h-full flex flex-col gap-4">
+            <div className="flex-grow flex items-center justify-center bg-gray-200 rounded-lg overflow-hidden min-h-0 relative">
+                <canvas ref={canvasRef} />
             </div>
-            <div className="flex-shrink-0 bg-gray-100 p-2 rounded space-y-2 max-h-48 overflow-y-auto">
-                <div className="flex flex-wrap items-center gap-1.5">
-                    <span className="text-xs font-medium text-gray-700">Crop:</span>
+            <div className="flex-shrink-0 bg-gray-100 p-3 rounded-b-lg space-y-3 overflow-y-auto">
+                <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-sm font-medium text-gray-700 mr-2">Crop:</span>
                     {CROP_RATIOS.map(cr => (
                         <button key={cr.name} onClick={() => setCropRatio(cr.value)}
-                            className={`px-2 py-0.5 text-xs rounded border ${cropRatio === cr.value ? 'bg-primary-accent text-white border-transparent' : 'bg-white text-gray-700 hover:bg-gray-200 border-gray-300'}`}>
+                            className={`px-3 py-1 text-xs rounded-lg border ${cropRatio === cr.value ? 'bg-primary-accent text-white border-transparent' : 'bg-white text-gray-700 hover:bg-gray-200 border-gray-300'}`}>
                             {cr.name}
                         </button>
                     ))}
                 </div>
-                <div className="border-t border-gray-300 pt-2 grid grid-cols-2 lg:grid-cols-3 gap-x-3 gap-y-1.5">
+                <div className="border-t border-gray-300 pt-3 grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-2">
                     <SliderControl label="Brightness" value={brightness} onChange={e => setBrightness(Number(e.target.value))} />
                     <SliderControl label="Contrast" value={contrast} onChange={e => setContrast(Number(e.target.value))} />
                     <SliderControl label="Saturation" value={saturate} onChange={e => setSaturate(Number(e.target.value))} />
@@ -184,18 +184,18 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(({ im
                     <SliderControl label="Blur" min={0} max={100} value={blur} onChange={e => setBlur(Number(e.target.value))} />
                     <SliderControl label="Pixelate" min={1} max={100} value={pixelate} onChange={e => setPixelate(Number(e.target.value))} />
                 </div>
-                <div className="border-t border-gray-300 pt-2 space-y-2">
+                <div className="border-t border-gray-300 pt-3 space-y-3">
                     <div className="flex items-center justify-between">
-                        <h4 className="text-xs font-semibold text-gray-700">Eraser Brush</h4>
+                        <h4 className="text-sm font-medium text-gray-700">Eraser Brush</h4>
                         <button onClick={() => setIsErasing(!isErasing)}
-                            className={`px-2 py-1 text-xs font-medium rounded flex items-center gap-1 ${isErasing ? 'bg-primary-accent text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}>
+                            className={`px-3 py-2 text-sm font-medium rounded-lg flex items-center gap-2 ${isErasing ? 'bg-primary-accent text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}>
                             <Icon name="trash" />
-                            {isErasing ? 'Stop' : 'Start'}
+                            {isErasing ? 'Stop Erasing' : 'Start Erasing'}
                         </button>
                     </div>
                     {isErasing && (
-                        <div className="space-y-1 bg-purple-50 p-2 rounded">
-                            <p className="text-xs text-gray-600">Draw over areas to erase. Use larger brush for faster removal.</p>
+                        <div className="space-y-2 bg-purple-50 p-3 rounded-lg">
+                            <p className="text-xs text-gray-600">Draw over areas to erase.</p>
                             <SliderControl label="Brush Size" min={5} max={100} unit="px" value={eraserSize} onChange={e => setEraserSize(Number(e.target.value))} />
                         </div>
                     )}
