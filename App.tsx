@@ -301,22 +301,25 @@ function App() {
         }
     };
 
-    const handleObjectRemovalRequest = async (cleanedImage: ImageFile) => {
+    const handleObjectRemovalRequest = async (eraserPath: {x: number, y: number}[]) => {
+        if (!imageToEdit) return;
+
         setIsRemovingObject(true);
-        showToast('info', 'Processing object removal...');
+        showToast('info', 'Processing object removal with AI...');
 
         try {
+            const { removeObjectFromImage } = await import('./services/imageService');
+            const cleanedImage = await removeObjectFromImage(imageToEdit, eraserPath);
+
             // Replace the current image being edited with the cleaned version
-            if (imageToEdit) {
-                const updatedImages = productData.images.map(img =>
-                    img.id === imageToEdit.id ? cleanedImage : img
-                );
-                onProductDataChange('images', updatedImages);
-                setImageToEdit(cleanedImage); // Update the editor to show the cleaned image
-                showToast('success', 'Object removed successfully!');
-            }
+            const updatedImages = productData.images.map(img =>
+                img.id === imageToEdit.id ? cleanedImage : img
+            );
+            onProductDataChange('images', updatedImages);
+            setImageToEdit(cleanedImage); // Update the editor to show the cleaned image
+            showToast('success', 'Object removed successfully!');
         } catch (error) {
-            showToast('error', error instanceof Error ? error.message : 'Failed to process object removal.');
+            showToast('error', error instanceof Error ? error.message : 'Failed to remove object. Please try again.');
         } finally {
             setIsRemovingObject(false);
         }

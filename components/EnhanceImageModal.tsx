@@ -17,7 +17,7 @@ interface EnhanceImageModalProps {
     backgroundPresets: BackgroundPreset[];
     image: ImageFile;
     showToast: (type: ToastInfo['type'], message: string) => void;
-    onObjectRemovalRequest?: (image: ImageFile) => void;
+    onObjectRemovalRequest?: (eraserPath: {x: number, y: number}[]) => void;
     isRemovingObject?: boolean;
 }
 

@@ -2,7 +2,6 @@ import React, { useRef, useEffect, useState, useImperativeHandle, forwardRef, us
 import { ImageFile } from '../types';
 import { Icon } from './Icon';
 import { Button } from './Button';
-import { removeObjectFromImage } from '../services/imageService';
 
 export interface ImageEditorHandle {
     getEditedImageData: () => { base64: string; mimeType: string; } | null;
@@ -12,7 +11,7 @@ interface ImageEditorProps {
     image: ImageFile;
     onColorChangeRequest: (color: string) => void;
     isChangingColor: boolean;
-    onObjectRemovalRequest?: (image: ImageFile) => void;
+    onObjectRemovalRequest?: (eraserPath: {x: number, y: number}[]) => void;
     isRemovingObject?: boolean;
 }
 
@@ -827,20 +826,11 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(({ im
                             {eraserPath.length > 0 && (
                                 <div className="flex gap-2">
                                     <Button
-                                        onClick={async () => {
+                                        onClick={() => {
                                             if (onObjectRemovalRequest && eraserPath.length > 0) {
-                                                try {
-                                                    const cleanedImage = await removeObjectFromImage(image, eraserPath);
-                                                    onObjectRemovalRequest(cleanedImage);
-                                                    setEraserPath([]);
-                                                    setIsEraserMode(false);
-                                                } catch (error) {
-                                                    console.error('Object removal failed:', error);
-                                                    // Show error in toast if showToast is available
-                                                    if (typeof window !== 'undefined' && (window as any).showToast) {
-                                                        (window as any).showToast('error', 'Failed to remove object. Please try again.');
-                                                    }
-                                                }
+                                                onObjectRemovalRequest(eraserPath);
+                                                setEraserPath([]);
+                                                setIsEraserMode(false);
                                             }
                                         }}
                                         disabled={isRemovingObject}
