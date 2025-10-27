@@ -75,9 +75,9 @@ export const EnhanceImageModal: React.FC<EnhanceImageModalProps> = ({ isOpen, on
                        <Icon name="x" />
                     </button>
                 </div>
-                <div className="flex-grow p-6 grid grid-cols-1 lg:grid-cols-3 gap-6 overflow-y-auto">
+                <div className="flex-grow p-6 grid grid-cols-1 lg:grid-cols-3 gap-6 overflow-y-auto min-h-0">
                     {/* Image Editor Column */}
-                    <div className="lg:col-span-2 bg-gray-100 rounded-lg p-4 flex flex-col h-full">
+                    <div className="lg:col-span-2 bg-gray-100 rounded-lg p-4 flex flex-col min-h-[600px]">
                        <ImageEditor
                             ref={editorRef}
                             image={editedImageFile}
