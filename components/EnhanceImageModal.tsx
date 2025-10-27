@@ -68,16 +68,16 @@ export const EnhanceImageModal: React.FC<EnhanceImageModalProps> = ({ isOpen, on
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-xl shadow-xl w-full max-w-5xl transform transition-all h-[90vh] flex flex-col">
-                <div className="flex items-center justify-between p-4 border-b">
-                    <h3 className="text-lg font-medium leading-6 text-gray-900">Edit & Enhance Image</h3>
+            <div className="bg-white rounded-xl shadow-xl w-full max-w-7xl transform transition-all h-[95vh] flex flex-col">
+                <div className="flex items-center justify-between p-3 border-b">
+                    <h3 className="text-base font-semibold leading-6 text-gray-900">Edit & Enhance Image</h3>
                     <button onClick={onClose} className="p-1 rounded-full text-gray-400 hover:bg-gray-100">
                        <Icon name="x" />
                     </button>
                 </div>
-                <div className="flex-grow p-6 grid grid-cols-1 lg:grid-cols-3 gap-6 overflow-y-auto min-h-0">
+                <div className="flex-grow p-4 grid grid-cols-1 lg:grid-cols-4 gap-4 overflow-hidden min-h-0">
                     {/* Image Editor Column */}
-                    <div className="lg:col-span-2 bg-gray-100 rounded-lg p-4 flex flex-col min-h-[600px]">
+                    <div className="lg:col-span-3 bg-gray-100 rounded-lg p-3 flex flex-col h-full">
                        <ImageEditor
                             ref={editorRef}
                             image={editedImageFile}
@@ -85,41 +85,40 @@ export const EnhanceImageModal: React.FC<EnhanceImageModalProps> = ({ isOpen, on
                     </div>
 
                     {/* AI Settings Column */}
-                    <div className="lg:col-span-1 space-y-6">
+                    <div className="lg:col-span-1 space-y-3 overflow-y-auto">
                         <div>
-                            <h4 className="text-base font-semibold text-gray-800 mb-3">1. Select Image Size</h4>
-                            <div className="grid grid-cols-1 gap-2">
+                            <h4 className="text-sm font-semibold text-gray-800 mb-2">Image Size</h4>
+                            <div className="grid grid-cols-1 gap-1.5">
                                 {SIZES.map(size => (
                                     <button key={size.id} onClick={() => setSelectedSize(size.id)}
-                                        className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors border ${selectedSize === size.id ? 'bg-primary-accent text-white border-transparent' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}>
+                                        className={`px-2 py-1.5 text-xs font-medium rounded transition-colors border ${selectedSize === size.id ? 'bg-primary-accent text-white border-transparent' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}>
                                         {size.name}
                                     </button>
                                 ))}
                             </div>
                         </div>
                         <div>
-                            <h4 className="text-base font-semibold text-gray-800 mb-3">2. Choose a Background Preset</h4>
-                            <div className="grid grid-cols-2 gap-2">
-                                {backgroundPresets.map(preset => (
+                            <h4 className="text-sm font-semibold text-gray-800 mb-2">Background Preset</h4>
+                            <div className="grid grid-cols-1 gap-1 max-h-48 overflow-y-auto">
+                                {backgroundPresets.map((preset: BackgroundPreset) => (
                                     <button key={preset.name} onClick={() => setCustomPrompt(preset.prompt)}
-                                        className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors text-left ${customPrompt === preset.prompt ? 'bg-primary-accent text-white border-transparent' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}>
+                                        className={`px-2 py-1 text-xs font-medium rounded transition-colors text-left ${customPrompt === preset.prompt ? 'bg-primary-accent text-white border-transparent' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}>
                                         {preset.name}
                                     </button>
                                 ))}
                             </div>
                         </div>
                         <div>
-                            <h4 className="text-base font-semibold text-gray-800 mb-3">3. Customize Your Prompt</h4>
-                            <textarea id="custom-prompt" rows={6} value={customPrompt}
-                                onChange={(e) => setCustomPrompt(e.target.value)}
+                            <h4 className="text-sm font-semibold text-gray-800 mb-2">Custom Prompt</h4>
+                            <textarea id="custom-prompt" rows={4} value={customPrompt}
+                                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setCustomPrompt(e.target.value)}
                                 placeholder="A sunlit, minimalist studio with a marble countertop..."
-                                className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-primary-accent focus:border-primary-accent sm:text-sm p-3"
+                                className="mt-1 block w-full rounded border-gray-300 shadow-sm focus:ring-primary-accent focus:border-primary-accent text-xs p-2"
                             ></textarea>
-                            <p className="mt-1 text-xs text-gray-500">Select a preset or write your own custom background prompt.</p>
                         </div>
                     </div>
                 </div>
-                <div className="px-6 py-4 bg-gray-50 flex justify-end border-t">
+                <div className="px-4 py-3 bg-gray-50 flex justify-end border-t">
                     <Button onClick={handleGenerate} variant="primary">
                         <Icon name="sparkles" className="mr-2"/>
                         Generate Enhanced Image
