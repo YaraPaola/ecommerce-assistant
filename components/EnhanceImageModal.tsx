@@ -68,7 +68,7 @@ export const EnhanceImageModal: React.FC<EnhanceImageModalProps> = ({ isOpen, on
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-xl shadow-xl w-full max-w-5xl transform transition-all h-[90vh] flex flex-col">
+            <div className="bg-white rounded-xl shadow-xl w-full max-w-6xl transform transition-all h-[92vh] flex flex-col">
                 <div className="flex items-center justify-between p-4 border-b">
                     <h3 className="text-lg font-medium leading-6 text-gray-900">Edit & Enhance Image</h3>
                     <button onClick={onClose} className="p-1 rounded-full text-gray-400 hover:bg-gray-100">
@@ -77,7 +77,7 @@ export const EnhanceImageModal: React.FC<EnhanceImageModalProps> = ({ isOpen, on
                 </div>
                 <div className="flex-grow p-6 grid grid-cols-1 lg:grid-cols-3 gap-6 overflow-y-auto min-h-0">
                     {/* Image Editor Column */}
-                    <div className="lg:col-span-2 bg-gray-100 rounded-lg p-4 flex flex-col min-h-[600px]">
+                    <div className="lg:col-span-2 bg-gray-100 rounded-lg p-4 flex flex-col min-h-[650px]">
                        <ImageEditor
                             ref={editorRef}
                             image={editedImageFile}
