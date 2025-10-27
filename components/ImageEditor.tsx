@@ -77,14 +77,22 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(({ im
 
         const resizeCanvas = () => {
             const container = canvas.getElement().parentElement;
-            if (container) {
-                canvas.setWidth(container.clientWidth);
-                canvas.setHeight(container.clientHeight);
-                if (imageRef.current) {
-                    imageRef.current.scaleToWidth(canvas.getWidth());
-                    imageRef.current.scaleToHeight(canvas.getHeight());
-                    canvas.centerObject(imageRef.current);
+            if (container && imageRef.current) {
+                const { clientWidth, clientHeight } = container;
+                const imageAspectRatio = imageRef.current.width! / imageRef.current.height!;
+                const containerAspectRatio = clientWidth / clientHeight;
+
+                let scale;
+                if (imageAspectRatio > containerAspectRatio) {
+                    scale = clientWidth / imageRef.current.width!;
+                } else {
+                    scale = clientHeight / imageRef.current.height!;
                 }
+
+                imageRef.current.scale(scale);
+                canvas.setWidth(clientWidth);
+                canvas.setHeight(clientHeight);
+                canvas.centerObject(imageRef.current);
                 canvas.renderAll();
             }
         };
