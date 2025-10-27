@@ -174,8 +174,8 @@ export const ImageEditor = forwardRef<ImageEditorHandle, ImageEditorProps>(({ im
 
     return (
         <div className="w-full h-full flex flex-col gap-2">
-            <div className="flex-grow flex items-center justify-center bg-gray-900 rounded overflow-hidden relative" style={{ minHeight: '500px' }}>
-                <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '100%' }} />
+            <div className="flex-1 bg-gray-900 rounded overflow-hidden relative" style={{ minHeight: '600px', height: '100%' }}>
+                <canvas ref={canvasRef} className="w-full h-full" />
             </div>
             <div className="flex-shrink-0 bg-gray-100 p-2 rounded space-y-2 max-h-48 overflow-y-auto">
                 <div className="flex flex-wrap items-center gap-1.5">
